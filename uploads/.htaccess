@@ -1,0 +1,6 @@
+# Permite servir archivos subidos, pero bloquea ejecución de PHP
+# (evita que alguien suba un .php malicioso y lo ejecute).
+
+<FilesMatch "\.ph(p[3457]?|t|tml)$">
+  Require all denied
+</FilesMatch>

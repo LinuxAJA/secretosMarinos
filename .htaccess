@@ -1,0 +1,15 @@
+# ============================================================================
+# .htaccess (raíz) — Envía el tráfico de la app a /public
+# sin romper assets ni uploads que viven fuera de public/
+# ============================================================================
+
+RewriteEngine On
+
+# No reescribir carpetas estáticas ni uploads
+RewriteRule ^(public|assets|uploads)(/|$) - [L]
+
+# Raíz del proyecto → public/
+RewriteRule ^$ public/ [L]
+
+# Resto de rutas de la app → public/...
+RewriteRule ^(.*)$ public/$1 [L]

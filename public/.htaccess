@@ -1,0 +1,20 @@
+# ============================================================================
+# public/.htaccess — Reescritura de URLs (Apache / XAMPP)
+# ============================================================================
+# Objetivo: que TODAS las peticiones pasen por index.php
+# salvo archivos/carpetas que existen de verdad
+# (css, js, imágenes dentro de public/, si las hubiera).
+#
+# Requisito XAMPP: mod_rewrite habilitado (viene activo por defecto).
+# Si usas AllowOverride None en httpd.conf, cámbialo a AllowOverride All
+# para el directorio htdocs (o reinicia Apache tras ajustar).
+# ============================================================================
+
+RewriteEngine On
+
+# Si el recurso pedido ES un archivo o carpeta real, se sirve tal cual
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Si no existe, reescribe a index.php (front controller)
+RewriteRule ^ index.php [L,QSA]

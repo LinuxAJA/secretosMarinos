@@ -1,0 +1,4 @@
+# Bloquea acceso HTTP directo a carpetas sensibles.
+# Si alguien intenta abrir /config o /app desde el navegador, Apache niega.
+
+Require all denied
