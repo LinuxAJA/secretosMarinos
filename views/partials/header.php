@@ -4,7 +4,7 @@
  * views/partials/header.php — Barra de navegación superior
  * ============================================================================
  * Partial = fragmento reutilizable incluido desde el layout.
- * Más adelante marcaremos el enlace activo según la URL.
+ * Si hay sesión: muestra panel + logout (POST + CSRF).
  * ============================================================================
  */
 $usuario = current_user();
@@ -16,7 +16,6 @@ $usuario = current_user();
             <span class="brand__text"><?= e(APP_NAME) ?></span>
         </a>
 
-        <!-- Botón hamburguesa (visible en móvil) -->
         <button
             class="nav-toggle"
             type="button"
@@ -40,9 +39,15 @@ $usuario = current_user();
 
             <?php if ($usuario): ?>
                 <a class="nav__link nav__link--accent" href="<?= url('/panel') ?>">
-                    Hola, <?= e($usuario['nombre'] ?? 'Usuario') ?>
+                    <?= e($usuario['nombre'] ?? 'Panel') ?>
                 </a>
+                <!-- Logout por POST: evita que un enlace malicioso cierre la sesión -->
+                <form class="nav__logout" method="post" action="<?= url('/logout') ?>">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="nav__link nav__link--logout">Salir</button>
+                </form>
             <?php else: ?>
+                <a class="nav__link" href="<?= url('/registro') ?>">Registro</a>
                 <a class="nav__link nav__link--accent" href="<?= url('/login') ?>">Ingresar</a>
             <?php endif; ?>
         </nav>

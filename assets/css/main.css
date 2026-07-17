@@ -258,6 +258,21 @@ h1, h2, h3 {
   color: var(--color-blanco);
 }
 
+.btn--secondary {
+  background: transparent;
+  color: var(--color-azul-profundo);
+  border-color: rgba(8, 61, 119, 0.35);
+}
+
+.btn--secondary:hover {
+  background: rgba(8, 61, 119, 0.06);
+  color: var(--color-azul-profundo);
+}
+
+.btn--block {
+  width: 100%;
+}
+
 .flash {
   width: min(100% - 2rem, var(--max-width));
   margin: var(--space-3) auto 0;
@@ -414,10 +429,183 @@ h1, h2, h3 {
 }
 
 /* --------------------------------------------------------------------------
-   7) RESPONSIVE
+   7) AUTH + PANEL (Paso 2)
+   -------------------------------------------------------------------------- */
+.auth-section {
+  padding: var(--space-6) 0;
+  min-height: calc(100vh - var(--header-h) - 8rem);
+}
+
+.auth-section__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.auth-intro__brand {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-azul-oceano);
+  margin: 0 0 var(--space-2);
+}
+
+.auth-intro__title {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  margin: 0 0 var(--space-3);
+}
+
+.auth-intro__text {
+  margin: 0;
+  max-width: 32ch;
+  color: #475569;
+}
+
+.auth-form {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(8, 61, 119, 0.08);
+  border-radius: calc(var(--radius) + 0.15rem);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-soft);
+}
+
+.form-field {
+  margin-bottom: var(--space-3);
+}
+
+.form-field label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+  color: var(--color-azul-profundo);
+}
+
+.form-field input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.75rem;
+  border: 1.5px solid rgba(8, 61, 119, 0.2);
+  border-radius: var(--radius);
+  font: inherit;
+  color: var(--color-texto);
+  background: var(--color-blanco);
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+
+.form-field input:focus {
+  outline: none;
+  border-color: var(--color-azul-oceano);
+  box-shadow: 0 0 0 3px rgba(11, 110, 153, 0.18);
+}
+
+.form-field input[aria-invalid="true"] {
+  border-color: var(--color-error);
+}
+
+.form-error {
+  margin: 0.35rem 0 0;
+  color: var(--color-error);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.form-hint {
+  margin: 0.35rem 0 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.form-alert {
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius);
+  margin-bottom: var(--space-3);
+  font-weight: 600;
+}
+
+.form-alert--error {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.auth-form__footer {
+  margin: var(--space-3) 0 0;
+  text-align: center;
+  color: #64748b;
+}
+
+.nav__logout {
+  display: inline;
+  margin: 0;
+}
+
+.nav__link--logout {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  padding: 0.35rem 0;
+  color: #64748b;
+}
+
+.nav__link--logout:hover {
+  color: var(--color-error);
+  border-bottom-color: var(--color-error);
+}
+
+.panel-kicker {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-azul-oceano);
+  margin: 0 0 var(--space-2);
+}
+
+.panel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.panel-stat {
+  padding: var(--space-4) 0;
+  border-top: 2px solid rgba(8, 61, 119, 0.12);
+}
+
+.panel-stat__label {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #64748b;
+  margin: 0 0 var(--space-2);
+}
+
+.panel-stat__value {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  color: var(--color-azul-profundo);
+  margin: 0;
+}
+
+.panel-stat__value--sm {
+  font-size: 1.1rem;
+  word-break: break-word;
+}
+
+.panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* --------------------------------------------------------------------------
+   8) RESPONSIVE
    -------------------------------------------------------------------------- */
 @media (max-width: 860px) {
-  .feature-grid {
+  .feature-grid,
+  .auth-section__grid,
+  .panel-grid {
     grid-template-columns: 1fr;
   }
 
@@ -452,6 +640,17 @@ h1, h2, h3 {
   .nav__link--accent {
     margin-top: 0.5rem;
     text-align: center;
+  }
+
+  .nav__logout {
+    margin-top: 0.25rem;
+  }
+
+  .nav__link--logout {
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 0.5rem;
+    border-bottom: 1px solid rgba(8, 61, 119, 0.06);
   }
 }
 

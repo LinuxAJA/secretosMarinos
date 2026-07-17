@@ -1,13 +1,21 @@
 /**
  * ============================================================================
- * main.js — JavaScript Vanilla base
+ * main.js — JavaScript Vanilla
  * ============================================================================
- * Paso 1: solo menú móvil accesible.
- * Más adelante: validación de formularios, Fetch API, etc.
+ * Paso 1: menú móvil accesible
+ * Paso 2: validación básica de formularios de auth (UX; el backend valida igual)
  * ============================================================================
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  initMobileNav();
+  initAuthForms();
+});
+
+/**
+ * Menú hamburguesa + Escape
+ */
+function initMobileNav() {
   const toggle = document.querySelector('[data-nav-toggle]');
   const nav = document.querySelector('[data-nav]');
 
@@ -32,4 +40,59 @@ document.addEventListener('DOMContentLoaded', () => {
       toggle.focus();
     }
   });
-});
+}
+
+/**
+ * Validación en cliente de login/registro.
+ * No reemplaza la validación PHP: solo mejora la experiencia.
+ */
+function initAuthForms() {
+  const forms = document.querySelectorAll('[data-auth-form]');
+
+  forms.forEach((form) => {
+    form.addEventListener('submit', (event) => {
+      clearClientErrors(form);
+
+      const password = form.querySelector('#password');
+      const confirm = form.querySelector('#password_confirm');
+      let valid = true;
+
+      form.querySelectorAll('[required]').forEach((field) => {
+        if (!String(field.value || '').trim()) {
+          showClientError(field, 'Este campo es obligatorio.');
+          valid = false;
+        }
+      });
+
+      if (password && password.value.length > 0 && password.value.length < 8) {
+        showClientError(password, 'La contraseña debe tener al menos 8 caracteres.');
+        valid = false;
+      }
+
+      if (confirm && password && password.value !== confirm.value) {
+        showClientError(confirm, 'Las contraseñas no coinciden.');
+        valid = false;
+      }
+
+      if (!valid) {
+        event.preventDefault();
+      }
+    });
+  });
+}
+
+function showClientError(field, message) {
+  field.setAttribute('aria-invalid', 'true');
+  const error = document.createElement('p');
+  error.className = 'form-error';
+  error.dataset.clientError = '1';
+  error.textContent = message;
+  field.insertAdjacentElement('afterend', error);
+}
+
+function clearClientErrors(form) {
+  form.querySelectorAll('[data-client-error]').forEach((el) => el.remove());
+  form.querySelectorAll('[aria-invalid]').forEach((el) => {
+    el.setAttribute('aria-invalid', 'false');
+  });
+}
