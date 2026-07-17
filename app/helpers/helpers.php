@@ -125,3 +125,57 @@ function has_role(string $role): bool
     $user = current_user();
     return $user && (($user['rol'] ?? '') === $role);
 }
+
+/**
+ * ¿El usuario tiene alguno de los roles listados?
+ */
+function has_any_role(string ...$roles): bool
+{
+    $user = current_user();
+    if (!$user) {
+        return false;
+    }
+    return in_array($user['rol'] ?? '', $roles, true);
+}
+
+/**
+ * Redirección global (usable desde middlewares y helpers, no solo controllers).
+ */
+function redirect_to(string $path): void
+{
+    header('Location: ' . url($path));
+    exit;
+}
+
+/**
+ * Exige token CSRF válido en peticiones POST.
+ * Si falla, muestra flash y redirige (o aborta).
+ */
+function require_csrf(?string $redirectTo = null): void
+{
+    $token = $_POST['_csrf'] ?? null;
+    if (!verify_csrf(is_string($token) ? $token : null)) {
+        flash('error', 'Token de seguridad inválido. Vuelve a enviar el formulario.');
+        redirect_to($redirectTo ?? '/');
+    }
+}
+
+/**
+ * Recupera valores "old" del formulario tras un error de validación.
+ * Se guardan en sesión con flash_old() / get_old().
+ */
+function flash_old(array $data): void
+{
+    $_SESSION['_old'] = $data;
+}
+
+function get_old(string $key, string $default = ''): string
+{
+    $value = $_SESSION['_old'][$key] ?? $default;
+    return is_string($value) ? $value : $default;
+}
+
+function clear_old(): void
+{
+    unset($_SESSION['_old']);
+}
