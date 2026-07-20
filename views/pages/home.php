@@ -39,10 +39,12 @@
             <article class="feature">
                 <h3 class="feature__title">Biblioteca marina</h3>
                 <p class="feature__text">Artículos, guías y rutas de aprendizaje sobre océanos y conservación.</p>
+                <p><a href="<?= url('/educacion') ?>">Explorar educación</a></p>
             </article>
             <article class="feature">
-                <h3 class="feature__title">Especies y ecosistemas</h3>
-                <p class="feature__text">Fichas científicas inspiradas en modelos como SeaLifeBase.</p>
+                <h3 class="feature__title">Noticias ambientales</h3>
+                <p class="feature__text">Novedades, campañas y descubrimientos para mantenerte informado.</p>
+                <p><a href="<?= url('/noticias') ?>">Ver noticias</a></p>
             </article>
             <article class="feature">
                 <h3 class="feature__title">Campañas y reportes</h3>
