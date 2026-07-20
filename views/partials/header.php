@@ -32,12 +32,16 @@ $usuario = current_user();
         <nav id="nav-principal" class="nav" data-nav aria-label="Navegación principal">
             <a class="nav__link" href="<?= url('/') ?>">Inicio</a>
             <a class="nav__link" href="<?= url('/educacion') ?>">Educación</a>
+            <a class="nav__link" href="<?= url('/noticias') ?>">Noticias</a>
             <a class="nav__link" href="<?= url('/especies') ?>">Especies</a>
             <a class="nav__link" href="<?= url('/ecosistemas') ?>">Ecosistemas</a>
             <a class="nav__link" href="<?= url('/campanias') ?>">Campañas</a>
             <a class="nav__link" href="<?= url('/reportes') ?>">Reportes</a>
 
             <?php if ($usuario): ?>
+                <?php if (has_any_role(ROLE_ADMIN, ROLE_DOCENTE)): ?>
+                    <a class="nav__link" href="<?= url('/admin') ?>">Admin</a>
+                <?php endif; ?>
                 <a class="nav__link nav__link--accent" href="<?= url('/panel') ?>">
                     <?= e($usuario['nombre'] ?? 'Panel') ?>
                 </a>

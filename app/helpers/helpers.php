@@ -139,6 +139,88 @@ function has_any_role(string ...$roles): bool
 }
 
 /**
+ * ---------------------------------------------------------------------------
+ * Políticas de autorización (RBAC Paso 3)
+ * ---------------------------------------------------------------------------
+ * Admin  → control global
+ * Docente → gestiona solo lo que él creó (autor_id)
+ * Estudiante → sin acceso admin
+ */
+
+function is_admin(): bool
+{
+    return has_role(ROLE_ADMIN);
+}
+
+function is_docente(): bool
+{
+    return has_role(ROLE_DOCENTE);
+}
+
+/**
+ * Solo el administrador gestiona la taxonomía (categorías).
+ */
+function can_manage_categories(): bool
+{
+    return is_admin();
+}
+
+/**
+ * ¿Puede crear/editar/eliminar un contenido o noticia?
+ * - Admin: siempre
+ * - Docente: solo si es el autor
+ * - Sin ítem (crear nuevo): admin y docente sí
+ *
+ * @param array<string,mixed>|null $item Fila con clave autor_id (null = alta nueva)
+ */
+function can_manage_authored_item(?array $item = null): bool
+{
+    if (!is_logged_in()) {
+        return false;
+    }
+
+    if (is_admin()) {
+        return true;
+    }
+
+    if (!is_docente()) {
+        return false;
+    }
+
+    // Alta nueva: el docente puede crear (quedará con su autor_id)
+    if ($item === null) {
+        return true;
+    }
+
+    $autorId = isset($item['autor_id']) ? (int) $item['autor_id'] : 0;
+    $userId  = (int) (current_user()['id'] ?? 0);
+
+    return $autorId > 0 && $autorId === $userId;
+}
+
+function can_manage_content(?array $item = null): bool
+{
+    return can_manage_authored_item($item);
+}
+
+function can_manage_news(?array $item = null): bool
+{
+    return can_manage_authored_item($item);
+}
+
+/**
+ * Bloquea la acción si no hay permiso: flash + redirect.
+ */
+function deny_unless(bool $allowed, string $message, string $redirectTo): void
+{
+    if ($allowed) {
+        return;
+    }
+    flash('error', $message);
+    redirect_to($redirectTo);
+}
+
+/**
  * Redirección global (usable desde middlewares y helpers, no solo controllers).
  */
 function redirect_to(string $path): void
@@ -178,4 +260,63 @@ function get_old(string $key, string $default = ''): string
 function clear_old(): void
 {
     unset($_SESSION['_old']);
+}
+
+/**
+ * Convierte un título en slug URL-amigable.
+ * Ejemplo: "¿Qué es el océano?" → "que-es-el-oceano"
+ */
+function slugify(string $text): string
+{
+    $text = trim(mb_strtolower($text, 'UTF-8'));
+
+    // Transliteración básica español → ASCII
+    $map = [
+        'á' => 'a', 'à' => 'a', 'ä' => 'a', 'â' => 'a',
+        'é' => 'e', 'è' => 'e', 'ë' => 'e', 'ê' => 'e',
+        'í' => 'i', 'ì' => 'i', 'ï' => 'i', 'î' => 'i',
+        'ó' => 'o', 'ò' => 'o', 'ö' => 'o', 'ô' => 'o',
+        'ú' => 'u', 'ù' => 'u', 'ü' => 'u', 'û' => 'u',
+        'ñ' => 'n', 'ç' => 'c',
+    ];
+    $text = strtr($text, $map);
+    $text = preg_replace('/[^a-z0-9]+/u', '-', $text) ?? '';
+    $text = trim($text, '-');
+
+    return $text !== '' ? $text : 'item';
+}
+
+/**
+ * Recorta texto para listados (resúmenes).
+ */
+function excerpt(?string $text, int $limit = 160): string
+{
+    $text = trim(strip_tags($text ?? ''));
+    if (mb_strlen($text) <= $limit) {
+        return $text;
+    }
+    return rtrim(mb_substr($text, 0, $limit - 1)) . '…';
+}
+
+/**
+ * Formatea fecha MySQL a formato legible es-CO.
+ */
+function format_date(?string $datetime, string $format = 'd/m/Y'): string
+{
+    if (!$datetime) {
+        return '';
+    }
+    $ts = strtotime($datetime);
+    return $ts ? date($format, $ts) : '';
+}
+
+/**
+ * Obtiene old input tipado (útil para selects/checkboxes en edición).
+ */
+function old(string $key, mixed $default = ''): mixed
+{
+    if (array_key_exists($key, $_SESSION['_old'] ?? [])) {
+        return $_SESSION['_old'][$key];
+    }
+    return $default;
 }
