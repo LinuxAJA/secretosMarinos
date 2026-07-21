@@ -12,6 +12,7 @@
  * Paso 1: inicio
  * Paso 2: autenticación + panel
  * Paso 3: educación + noticias (público) y CRUD admin
+ * Complemento auth: edición de perfil en /panel
  * ============================================================================
  */
 
@@ -38,8 +39,11 @@ $router->get('/registro', [AuthController::class, 'showRegister']);
 $router->post('/registro', [AuthController::class, 'register']);
 $router->post('/logout', [AuthController::class, 'logout']);
 
-// Panel usuario
+// Panel usuario + perfil (complemento auth)
 $router->get('/panel', [PanelController::class, 'index']);
+$router->post('/panel/perfil', [PanelController::class, 'updateProfile']);
+$router->post('/panel/password', [PanelController::class, 'updatePassword']);
+$router->post('/panel/eliminar', [PanelController::class, 'destroyAccount']);
 
 // Educación (público) — Paso 3
 $router->get('/educacion', [EducationController::class, 'index']);
