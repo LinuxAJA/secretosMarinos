@@ -273,6 +273,17 @@ h1, h2, h3 {
   width: 100%;
 }
 
+.btn--danger {
+  background: var(--color-error);
+  color: var(--color-blanco);
+  border-color: var(--color-error);
+}
+
+.btn--danger:hover {
+  background: #b91c1c;
+  color: var(--color-blanco);
+}
+
 .flash {
   width: min(100% - 2rem, var(--max-width));
   margin: var(--space-3) auto 0;
@@ -614,6 +625,50 @@ h1, h2, h3 {
   gap: var(--space-3);
 }
 
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+}
+
+.profile-card {
+  padding: var(--space-4);
+  border-top: 2px solid rgba(8, 61, 119, 0.12);
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: calc(var(--radius) + 0.1rem);
+}
+
+.profile-card__title {
+  font-size: 1.35rem;
+  margin: 0 0 var(--space-2);
+}
+
+.profile-card__lead {
+  margin: 0 0 var(--space-4);
+  color: #64748b;
+}
+
+.profile-card .admin-form {
+  max-width: none;
+}
+
+.profile-card input:disabled {
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+.profile-card--danger {
+  margin-top: var(--space-4);
+  border-top-color: rgba(220, 38, 38, 0.35);
+  background: rgba(254, 226, 226, 0.35);
+}
+
+.profile-card--danger .profile-card__title {
+  color: #991b1b;
+}
+
 /* --------------------------------------------------------------------------
    8) EDUCACIÓN + NOTICIAS + ADMIN (Paso 3)
    -------------------------------------------------------------------------- */
@@ -950,7 +1005,8 @@ h1, h2, h3 {
   .panel-grid,
   .featured-list,
   .form-grid-2,
-  .filter-bar {
+  .filter-bar,
+  .profile-grid {
     grid-template-columns: 1fr;
   }
 

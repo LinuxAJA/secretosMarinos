@@ -2,7 +2,7 @@
 
 Plataforma web de **alfabetización oceánica** y **acción ambiental** orientada a un entorno formativo SENA. Integra educación marina, fichas de especies y ecosistemas, campañas comunitarias, reportes ambientales y gamificación básica, todo en un stack local sin frameworks ni nube.
 
-> **Estado actual:** Paso 3 completado — biblioteca educativa, noticias, panel admin y reglas RBAC (admin / docente / estudiante).  
+> **Estado actual:** Paso 3 completado + perfil de usuario (complemento de auth/panel).  
 > **Siguiente:** Paso 4 — especies marinas y ecosistemas.
 
 ---
@@ -52,6 +52,7 @@ Desarrollar una plataforma web dinámica para informar, educar, concientizar y p
 | Módulo | Descripción | Estado |
 |--------|-------------|--------|
 | Autenticación y roles | Registro, login, logout, `admin` / `docente` / `estudiante` | Hecho (Paso 2–3) |
+| Perfil de usuario | Editar/eliminar cuenta propia (nombre, correo, contraseña) | Hecho (complemento auth) |
 | Biblioteca educativa | Contenidos y categorías (CRUD + RBAC) | Hecho (Paso 3) |
 | Noticias | Publicación, destacados y CRUD admin | Hecho (Paso 3) |
 | Panel admin básico | Dashboard + gestión de contenidos/noticias/categorías | Hecho (Paso 3) |
@@ -116,6 +117,9 @@ Navegador
 |-----------|-------|---------|------------|
 | Registro público / login | Sí* | Sí* | Sí |
 | Panel personal `/panel` | Sí | Sí | Sí |
+| Editar propio nombre / correo / contraseña | Sí | Sí | Sí |
+| Eliminar la propia cuenta | Sí** | Sí | Sí |
+| Cambiar el propio rol | No | No | No |
 | Ver biblioteca y noticias públicas | Sí | Sí | Sí |
 | Acceso a `/admin` | Sí | Sí | No |
 | CRUD contenidos / noticias **propios** | Sí | Sí | No |
@@ -123,7 +127,8 @@ Navegador
 | Ver listado de categorías | Sí | Sí (solo lectura) | No |
 | Crear / editar / eliminar categorías | Sí | No | No |
 
-\*Las cuentas admin/docente del entorno demo vienen del `seed.sql`. El registro público crea rol **estudiante**.
+\*Las cuentas admin/docente del entorno demo vienen del `seed.sql`. El registro público crea rol **estudiante**.  
+\*\*Un administrador **no** puede eliminarse si es el único admin activo.
 
 Políticas en código: `is_admin()`, `can_manage_content()`, `can_manage_news()`, `can_manage_categories()` en `app/helpers/helpers.php`. La autorización se valida en servidor (controllers), no solo en la UI.
 
@@ -131,11 +136,12 @@ Políticas en código: `is_admin()`, `can_manage_content()`, `can_manage_news()`
 
 ## 6. Roadmap de implementación
 
-| Paso | Nombre | Estado |
-|------|--------|--------|
+| Paso / entrega | Nombre | Estado |
+|----------------|--------|--------|
 | 1 | Cimientos (MVC, UI, schema, home) | Completado |
 | 2 | Autenticación y roles | Completado |
 | 3 | Educativo + noticias + RBAC admin | Completado |
+| — | Perfil de usuario (complemento de auth/panel) | Completado |
 | 4 | Especies y ecosistemas | Pendiente |
 | 5 | Campañas y reportes | Pendiente |
 | 6 | Gamificación mínima | Pendiente |
@@ -146,7 +152,7 @@ Políticas en código: `is_admin()`, `can_manage_content()`, `can_manage_news()`
 
 ## 7. Guía acumulada por pasos
 
-Cada paso conserva su alcance y su forma de prueba. Al final de esta sección hay una **checklist completa** del sistema hasta el Paso 3.
+Cada paso conserva su alcance y su forma de prueba. Al final de esta sección hay una **checklist completa** del sistema hasta el Paso 3 + perfil.
 
 ### 7.1 Paso 1 — Cimientos (completado)
 
@@ -250,9 +256,37 @@ Cada paso conserva su alcance y su forma de prueba. Al final de esta sección ha
 
 1. Login como estudiante → sin acceso a `/admin` (redirige / sin permiso).
 
+### 7.4 Perfil de usuario — complemento de auth (completado)
+
+> **Contexto:** el Paso 2 dejó `/panel` como vista informativa. Este entregable **no es un “Paso 3.5”**: es un feature aparte (`feature/perfil-usuario`) que completa la autogestión de cuenta sin reabrir el PR de autenticación ni mezclarse con especies (Paso 4).
+
+#### Qué incluye
+
+- Edición de **nombre** y **correo** en `/panel`  
+- Cambio de **contraseña** (exige contraseña actual + confirmación)  
+- **Eliminar cuenta** (hard delete) con contraseña + checkbox de confirmación  
+- Bloqueo si intenta borrarse el **único admin activo**  
+- Correo único (no puede chocar con otra cuenta)  
+- El **rol no se puede cambiar** desde el perfil  
+- Tras borrar: logout + redirect a inicio; contenidos/noticias del autor quedan con `autor_id = NULL` (FK)  
+- `ProfileService` + métodos en `UserRepository`  
+- CSRF en todos los formularios del panel; regeneración de sesión al cambiar contraseña  
+
+#### Cómo probar el perfil
+
+1. Inicia sesión (cualquier rol) y abre [http://localhost/secretosMarinos/public/panel](http://localhost/secretosMarinos/public/panel).  
+2. En **Mis datos**, cambia el nombre y guarda → debe verse en el saludo y en el header.  
+3. Intenta un correo ya usado por otra cuenta → error de validación.  
+4. En **Cambiar contraseña**, usa la actual incorrecta → rechazo.  
+5. Cambia la contraseña correctamente → mensaje de éxito; cierra sesión y entra con la nueva.  
+6. Verifica que el campo Rol está deshabilitado / no editable.  
+7. Con un usuario de prueba (no el único admin), en **Eliminar cuenta**: sin checkbox o con password mala → rechazo.  
+8. Elimina una cuenta de prueba con confirmación correcta → sesión cerrada y redirect a inicio; no debe poder volver a entrar.  
+9. Como único admin del seed, intenta eliminarte → debe bloquearse con mensaje de “única cuenta de administrador”.
+
 ---
 
-## 8. Checklist de prueba completa (hasta Paso 3)
+## 8. Checklist de prueba completa (hasta Paso 3 + perfil)
 
 Usa esta lista como guía de verificación integral del sistema actual:
 
@@ -261,6 +295,11 @@ Usa esta lista como guía de verificación integral del sistema actual:
 - [ ] Registro crea estudiante y deja sesión iniciada  
 - [ ] Login / logout funcionan (demo o cuenta nueva)  
 - [ ] `/panel` exige autenticación  
+- [ ] En `/panel` se puede actualizar nombre y correo  
+- [ ] Cambio de contraseña exige la actual y actualiza el login  
+- [ ] El rol no es editable por el propio usuario  
+- [ ] Se puede eliminar la propia cuenta con contraseña + confirmación  
+- [ ] El único admin activo no puede autoeliminarse  
 - [ ] `/educacion` lista, filtra y muestra fichas  
 - [ ] Búsqueda por texto en educación no lanza error PDO  
 - [ ] `/noticias` lista, muestra destacadas y fichas  
@@ -323,8 +362,10 @@ Layouts: público (`views/layouts/main.php`) y administración (`views/layouts/a
 - Contraseñas con `password_hash` / `password_verify`  
 - Consultas preparadas PDO (`ATTR_EMULATE_PREPARES = false`)  
 - Middleware de roles + políticas RBAC por autoría  
-- Regeneración de ID de sesión al login  
+- Regeneración de ID de sesión al login y al cambiar contraseña  
 - Límite básico de intentos fallidos de login  
+- Autogestión de perfil limitada al propio usuario (sin escalada de rol)  
+- Borrado de cuenta con confirmación; protección del último administrador  
 
 ---
 
@@ -366,7 +407,7 @@ Prefijos útiles: `feat`, `fix`, `docs`, `refactor`, `chore`, `test`, `style`.
 3. Importar `database/schema.sql` y `database/seed.sql`  
 4. Ajustar `config/database.php` si tu MySQL tiene contraseña  
 5. Abrir `http://localhost/secretosMarinos/public/`  
-6. Seguir la **checklist de la sección 8** para validar Pasos 1–3  
+6. Seguir la **checklist de la sección 8** para validar Pasos 1–3 y el perfil de usuario  
 
 ---
 

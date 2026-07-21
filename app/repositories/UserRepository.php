@@ -71,14 +71,22 @@ class UserRepository
     }
 
     /**
-     * ¿Existe ya ese correo? (registro)
+     * ¿Existe ya ese correo?
+     * @param int|null $exceptId Ignora este usuario (útil al editar perfil)
      */
-    public function emailExists(string $email): bool
+    public function emailExists(string $email, ?int $exceptId = null): bool
     {
-        $stmt = $this->db->prepare(
-            'SELECT 1 FROM usuarios WHERE correo = :correo LIMIT 1'
-        );
-        $stmt->execute(['correo' => $email]);
+        $sql = 'SELECT 1 FROM usuarios WHERE correo = :correo';
+        $params = ['correo' => $email];
+
+        if ($exceptId !== null) {
+            $sql .= ' AND id <> :id';
+            $params['id'] = $exceptId;
+        }
+
+        $sql .= ' LIMIT 1';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
 
         return (bool) $stmt->fetchColumn();
     }
@@ -102,6 +110,81 @@ class UserRepository
         ]);
 
         return (int) $this->db->lastInsertId();
+    }
+
+    /**
+     * Devuelve solo el hash de contraseña (para verificar al cambiar password).
+     */
+    public function getPasswordHash(int $id): ?string
+    {
+        $stmt = $this->db->prepare(
+            'SELECT password_hash FROM usuarios WHERE id = :id LIMIT 1'
+        );
+        $stmt->execute(['id' => $id]);
+        $hash = $stmt->fetchColumn();
+
+        return $hash !== false ? (string) $hash : null;
+    }
+
+    /**
+     * Actualiza nombre y correo del propio usuario.
+     *
+     * @param array{nombre:string,correo:string} $data
+     */
+    public function updateProfile(int $id, array $data): bool
+    {
+        $stmt = $this->db->prepare(
+            'UPDATE usuarios
+             SET nombre = :nombre, correo = :correo
+             WHERE id = :id'
+        );
+
+        return $stmt->execute([
+            'id'     => $id,
+            'nombre' => $data['nombre'],
+            'correo' => $data['correo'],
+        ]);
+    }
+
+    /**
+     * Actualiza el hash de contraseña.
+     */
+    public function updatePassword(int $id, string $passwordHash): bool
+    {
+        $stmt = $this->db->prepare(
+            'UPDATE usuarios SET password_hash = :password_hash WHERE id = :id'
+        );
+
+        return $stmt->execute([
+            'id'            => $id,
+            'password_hash' => $passwordHash,
+        ]);
+    }
+
+    /**
+     * Cuenta administradores activos (para no dejar el sistema sin admin).
+     */
+    public function countActiveAdmins(): int
+    {
+        $sql = 'SELECT COUNT(*)
+                FROM usuarios u
+                INNER JOIN roles r ON r.id = u.rol_id
+                WHERE r.nombre = :rol AND u.activo = 1';
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['rol' => ROLE_ADMIN]);
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    /**
+     * Elimina un usuario (hard delete).
+     * Las FK con SET NULL / CASCADE preservan integridad en tablas hijas.
+     */
+    public function deleteById(int $id): bool
+    {
+        $stmt = $this->db->prepare('DELETE FROM usuarios WHERE id = :id');
+        return $stmt->execute(['id' => $id]);
     }
 
     /**

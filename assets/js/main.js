@@ -10,7 +10,19 @@
 document.addEventListener('DOMContentLoaded', () => {
   initMobileNav();
   initAuthForms();
+  initFocusForm();
 });
+
+/**
+ * Si hay errores de validación en un formulario del panel,
+ * hace scroll hasta la tarjeta marcada con data-focus-form.
+ */
+function initFocusForm() {
+  const target = document.querySelector('[data-focus-form]');
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
 
 /**
  * Menú hamburguesa + Escape
