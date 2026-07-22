@@ -13,18 +13,23 @@
  * Paso 2: autenticación + panel
  * Paso 3: educación + noticias (público) y CRUD admin
  * Complemento auth: edición de perfil en /panel
+ * Paso 4: especies marinas + ecosistemas
  * ============================================================================
  */
 
 use App\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Controllers\Admin\ContentController as AdminContentController;
 use App\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Controllers\Admin\EcosystemController as AdminEcosystemController;
 use App\Controllers\Admin\NewsController as AdminNewsController;
+use App\Controllers\Admin\SpeciesController as AdminSpeciesController;
 use App\Controllers\AuthController;
 use App\Controllers\EducationController;
+use App\Controllers\EcosystemController;
 use App\Controllers\HomeController;
 use App\Controllers\NewsController;
 use App\Controllers\PanelController;
+use App\Controllers\SpeciesController;
 use App\Core\Router;
 
 /** @var Router $router */
@@ -53,6 +58,12 @@ $router->get('/educacion/{slug}', [EducationController::class, 'show']);
 $router->get('/noticias', [NewsController::class, 'index']);
 $router->get('/noticias/{slug}', [NewsController::class, 'show']);
 
+// Catálogo científico (público) — Paso 4
+$router->get('/ecosistemas', [EcosystemController::class, 'index']);
+$router->get('/ecosistemas/{slug}', [EcosystemController::class, 'show']);
+$router->get('/especies', [SpeciesController::class, 'index']);
+$router->get('/especies/{slug}', [SpeciesController::class, 'show']);
+
 // Admin dashboard
 $router->get('/admin', [AdminDashboardController::class, 'index']);
 
@@ -79,3 +90,19 @@ $router->post('/admin/noticias', [AdminNewsController::class, 'store']);
 $router->get('/admin/noticias/{id}/editar', [AdminNewsController::class, 'edit']);
 $router->post('/admin/noticias/{id}', [AdminNewsController::class, 'update']);
 $router->post('/admin/noticias/{id}/eliminar', [AdminNewsController::class, 'destroy']);
+
+// Admin ecosistemas — CRUD solo admin; listado también docente
+$router->get('/admin/ecosistemas', [AdminEcosystemController::class, 'index']);
+$router->get('/admin/ecosistemas/crear', [AdminEcosystemController::class, 'create']);
+$router->post('/admin/ecosistemas', [AdminEcosystemController::class, 'store']);
+$router->get('/admin/ecosistemas/{id}/editar', [AdminEcosystemController::class, 'edit']);
+$router->post('/admin/ecosistemas/{id}', [AdminEcosystemController::class, 'update']);
+$router->post('/admin/ecosistemas/{id}/eliminar', [AdminEcosystemController::class, 'destroy']);
+
+// Admin especies — admin global; docente solo autoría propia
+$router->get('/admin/especies', [AdminSpeciesController::class, 'index']);
+$router->get('/admin/especies/crear', [AdminSpeciesController::class, 'create']);
+$router->post('/admin/especies', [AdminSpeciesController::class, 'store']);
+$router->get('/admin/especies/{id}/editar', [AdminSpeciesController::class, 'edit']);
+$router->post('/admin/especies/{id}', [AdminSpeciesController::class, 'update']);
+$router->post('/admin/especies/{id}/eliminar', [AdminSpeciesController::class, 'destroy']);

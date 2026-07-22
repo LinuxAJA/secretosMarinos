@@ -46,6 +46,12 @@ logs/*
 # ---------------------------------------------------------------------------
 uploads/images/*
 !uploads/images/.gitkeep
+!uploads/images/ecosistemas/
+uploads/images/ecosistemas/*
+!uploads/images/ecosistemas/.gitkeep
+!uploads/images/especies/
+uploads/images/especies/*
+!uploads/images/especies/.gitkeep
 uploads/docs/*
 !uploads/docs/.gitkeep
 uploads/avatars/*

@@ -47,6 +47,14 @@
                 <p><a href="<?= url('/noticias') ?>">Ver noticias</a></p>
             </article>
             <article class="feature">
+                <h3 class="feature__title">Especies y ecosistemas</h3>
+                <p class="feature__text">Fichas científicas sobre biodiversidad, hábitats y conservación.</p>
+                <p>
+                    <a href="<?= url('/especies') ?>">Ver especies</a>
+                    · <a href="<?= url('/ecosistemas') ?>">Ver ecosistemas</a>
+                </p>
+            </article>
+            <article class="feature">
                 <h3 class="feature__title">Campañas y reportes</h3>
                 <p class="feature__text">Participación ciudadana con evidencias y seguimiento de casos.</p>
             </article>

@@ -31,6 +31,17 @@ function asset(string $path): string
 }
 
 /**
+ * Construye la URL pública de un archivo subido.
+ */
+function upload_url(?string $path): string
+{
+    if (!$path) {
+        return '';
+    }
+    return rtrim(UPLOADS_URL, '/') . '/' . ltrim($path, '/');
+}
+
+/**
  * Escapa texto para imprimirlo de forma segura en HTML (previene XSS).
  * Siempre usa e() al mostrar datos del usuario o de la BD en vistas.
  */
@@ -204,6 +215,22 @@ function can_manage_content(?array $item = null): bool
 }
 
 function can_manage_news(?array $item = null): bool
+{
+    return can_manage_authored_item($item);
+}
+
+/**
+ * Los ecosistemas son taxonomía global: solo los administra el admin.
+ */
+function can_manage_ecosystems(): bool
+{
+    return is_admin();
+}
+
+/**
+ * Las especies siguen autoría: admin global, docente solo las propias.
+ */
+function can_manage_species(?array $item = null): bool
 {
     return can_manage_authored_item($item);
 }

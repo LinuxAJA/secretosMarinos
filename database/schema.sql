@@ -118,9 +118,12 @@ CREATE TABLE ecosistemas (
   amenazas TEXT NULL,
   buenas_practicas TEXT NULL,
   imagen VARCHAR(255) NULL,
+  publicado TINYINT(1) NOT NULL DEFAULT 1,
   creado_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  actualizado_en DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  UNIQUE KEY uk_ecosistemas_slug (slug)
+  UNIQUE KEY uk_ecosistemas_slug (slug),
+  KEY idx_ecosistemas_publicado (publicado)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------------------------------------------------------
@@ -130,6 +133,7 @@ DROP TABLE IF EXISTS especies;
 CREATE TABLE especies (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   ecosistema_id INT UNSIGNED NULL,
+  autor_id INT UNSIGNED NULL,
   nombre_comun VARCHAR(150) NOT NULL,
   nombre_cientifico VARCHAR(150) NOT NULL,
   slug VARCHAR(180) NOT NULL,
@@ -146,9 +150,15 @@ CREATE TABLE especies (
   PRIMARY KEY (id),
   UNIQUE KEY uk_especies_slug (slug),
   KEY idx_especies_ecosistema (ecosistema_id),
+  KEY idx_especies_autor (autor_id),
+  KEY idx_especies_publicado (publicado),
   KEY idx_especies_nombre (nombre_comun),
   CONSTRAINT fk_especies_ecosistema
     FOREIGN KEY (ecosistema_id) REFERENCES ecosistemas (id)
+    ON UPDATE CASCADE
+    ON DELETE SET NULL,
+  CONSTRAINT fk_especies_autor
+    FOREIGN KEY (autor_id) REFERENCES usuarios (id)
     ON UPDATE CASCADE
     ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
