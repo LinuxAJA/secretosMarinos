@@ -2,8 +2,8 @@
 
 Plataforma web de **alfabetización oceánica** y **acción ambiental** orientada a un entorno formativo SENA. Integra educación marina, fichas de especies y ecosistemas, campañas comunitarias, reportes ambientales y gamificación básica, todo en un stack local sin frameworks ni nube.
 
-> **Estado actual:** Paso 3 completado + perfil de usuario (complemento de auth/panel).  
-> **Siguiente:** Paso 4 — especies marinas y ecosistemas.
+> **Estado actual:** Paso 4 completado — catálogo científico de especies y ecosistemas, imágenes seguras y RBAC.
+> **Siguiente:** Paso 5 — campañas y reportes ambientales.
 
 ---
 
@@ -55,9 +55,9 @@ Desarrollar una plataforma web dinámica para informar, educar, concientizar y p
 | Perfil de usuario | Editar/eliminar cuenta propia (nombre, correo, contraseña) | Hecho (complemento auth) |
 | Biblioteca educativa | Contenidos y categorías (CRUD + RBAC) | Hecho (Paso 3) |
 | Noticias | Publicación, destacados y CRUD admin | Hecho (Paso 3) |
-| Panel admin básico | Dashboard + gestión de contenidos/noticias/categorías | Hecho (Paso 3) |
-| Especies marinas | Fichas científicas (CRUD + filtros) | Pendiente (Paso 4) |
-| Ecosistemas | Arrecifes, manglares, etc. | Pendiente (Paso 4) |
+| Panel admin básico | Dashboard + gestión de contenidos/noticias/categorías/especies/ecosistemas | Hecho (Pasos 3–4) |
+| Especies marinas | Fichas científicas, filtros, imágenes y CRUD con autoría | Hecho (Paso 4) |
+| Ecosistemas | Fichas, especies relacionadas, imágenes y CRUD admin | Hecho (Paso 4) |
 | Campañas ambientales | Objetivos, fechas, estado | Pendiente (Paso 5) |
 | Reportes ambientales | Evidencia, ubicación, estados | Pendiente (Paso 5) |
 | Gamificación mínima | Puntos e insignias iniciales | Pendiente (Paso 6) |
@@ -75,23 +75,23 @@ Foros, certificados digitales, mapas interactivos, multimedia avanzada, simulaci
 secretosMarinos/
 ├── app/
 │   ├── controllers/       # Home, Auth, Education, News, Panel…
-│   │   └── admin/         # Dashboard, Content, Category, News (Paso 3)
+│   │   └── admin/         # CRUD de contenidos, noticias, especies y ecosistemas
 │   ├── core/              # Database, Router, Controller, Autoload
 │   ├── helpers/           # url(), e(), csrf, flash, políticas RBAC
 │   ├── middlewares/       # AuthMiddleware (roles / sesión)
 │   ├── models/            # (reserva)
 │   ├── repositories/      # Acceso SQL (PDO preparado)
-│   └── services/          # Reglas de negocio / validación
+│   └── services/          # Reglas de negocio, validación y carga de imágenes
 ├── config/                # constants, database, app, routes
 ├── views/
 │   ├── layouts/           # main (público) + admin
 │   ├── partials/          # header, footer, admin-sidebar
-│   ├── pages/             # home, auth, educacion, noticias, panel
-│   └── admin/             # dashboard, contenidos, categorias, noticias
+│   ├── pages/             # home, auth, educación, noticias, especies, ecosistemas
+│   └── admin/             # CRUD de módulos administrativos
 ├── public/                # Único punto de entrada (index.php)
 ├── assets/                # CSS, JS, imágenes estáticas
-├── uploads/               # Archivos subidos en runtime
-├── database/              # schema.sql, seed.sql
+├── uploads/               # Imágenes runtime (no versionadas)
+├── database/              # schema.sql, seed.sql y migrations/
 ├── docs/                  # Documentación de proyecto
 └── logs/                  # Errores / auditoría local
 ```
@@ -111,7 +111,7 @@ Navegador
 
 ---
 
-## 5. Roles y permisos (acumulado Pasos 2–3)
+## 5. Roles y permisos (acumulado Pasos 2–4)
 
 | Capacidad | Admin | Docente | Estudiante |
 |-----------|-------|---------|------------|
@@ -126,11 +126,16 @@ Navegador
 | Editar / eliminar contenidos o noticias **de otros** | Sí | No | No |
 | Ver listado de categorías | Sí | Sí (solo lectura) | No |
 | Crear / editar / eliminar categorías | Sí | No | No |
+| Ver especies y ecosistemas públicos | Sí | Sí | Sí |
+| CRUD de especies **propias** | Sí | Sí | No |
+| Editar / eliminar especies de otros | Sí | No | No |
+| Ver ecosistemas en administración | Sí | Sí (solo lectura) | No |
+| Crear / editar / eliminar ecosistemas | Sí | No | No |
 
 \*Las cuentas admin/docente del entorno demo vienen del `seed.sql`. El registro público crea rol **estudiante**.  
 \*\*Un administrador **no** puede eliminarse si es el único admin activo.
 
-Políticas en código: `is_admin()`, `can_manage_content()`, `can_manage_news()`, `can_manage_categories()` en `app/helpers/helpers.php`. La autorización se valida en servidor (controllers), no solo en la UI.
+Políticas en código: `is_admin()`, `can_manage_content()`, `can_manage_news()`, `can_manage_categories()`, `can_manage_species()` y `can_manage_ecosystems()` en `app/helpers/helpers.php`. La autorización se valida en servidor (controllers), no solo en la UI.
 
 ---
 
@@ -142,7 +147,7 @@ Políticas en código: `is_admin()`, `can_manage_content()`, `can_manage_news()`
 | 2 | Autenticación y roles | Completado |
 | 3 | Educativo + noticias + RBAC admin | Completado |
 | — | Perfil de usuario (complemento de auth/panel) | Completado |
-| 4 | Especies y ecosistemas | Pendiente |
+| 4 | Especies y ecosistemas | Completado |
 | 5 | Campañas y reportes | Pendiente |
 | 6 | Gamificación mínima | Pendiente |
 | 7 | Admin ampliado y estadísticas básicas | Pendiente |
@@ -152,7 +157,7 @@ Políticas en código: `is_admin()`, `can_manage_content()`, `can_manage_news()`
 
 ## 7. Guía acumulada por pasos
 
-Cada paso conserva su alcance y su forma de prueba. Al final de esta sección hay una **checklist completa** del sistema hasta el Paso 3 + perfil.
+Cada paso conserva su alcance y su forma de prueba. Al final de esta sección hay una **checklist completa** del sistema hasta el Paso 4 + perfil.
 
 ### 7.1 Paso 1 — Cimientos (completado)
 
@@ -284,9 +289,56 @@ Cada paso conserva su alcance y su forma de prueba. Al final de esta sección ha
 8. Elimina una cuenta de prueba con confirmación correcta → sesión cerrada y redirect a inicio; no debe poder volver a entrar.  
 9. Como único admin del seed, intenta eliminarte → debe bloquearse con mensaje de “única cuenta de administrador”.
 
+### 7.5 Paso 4 — Especies y ecosistemas (completado)
+
+#### Qué incluye
+
+**Catálogo público**
+
+- `/ecosistemas`: búsqueda, paginación y fichas de ecosistemas publicados
+- Ficha de ecosistema con función ecológica, amenazas, buenas prácticas y especies asociadas
+- `/especies`: búsqueda por nombre común/científico y filtros por ecosistema/conservación
+- Ficha científica con taxonomía, hábitat, distribución, amenazas, conservación y autor
+- Estados vacíos, diseño responsive e imágenes opcionales con texto alternativo
+
+**Administración y RBAC**
+
+- Admin: CRUD completo de ecosistemas y de cualquier especie
+- Docente: ecosistemas de solo lectura; CRUD únicamente de sus especies (`autor_id`)
+- Estudiante: catálogo público, sin acceso administrativo
+- Ecosistemas eliminados dejan sus especies con `ecosistema_id = NULL` (`ON DELETE SET NULL`)
+
+**Imágenes seguras**
+
+- `ImageUploadService`: MIME real con `finfo`, máximo 5 MB y nombres aleatorios
+- Formatos admitidos: JPG, PNG, WEBP y GIF
+- Reemplazo/eliminación controlada de archivos y bloqueo de ejecución PHP en `uploads/`
+- Rutas: `uploads/images/ecosistemas/` y `uploads/images/especies/`
+
+**Base de datos**
+
+- `especies.autor_id` con FK a usuarios (`ON DELETE SET NULL`)
+- `ecosistemas.publicado` y `ecosistemas.actualizado_en`
+- Migración incremental: `database/migrations/004_species_ecosystems.sql`
+- `schema.sql` y `seed.sql` actualizados para instalaciones nuevas
+
+#### Cómo probar el Paso 4
+
+1. En una BD existente, ejecuta una sola vez `database/migrations/004_species_ecosystems.sql`.
+2. Abre [http://localhost/secretosMarinos/public/ecosistemas](http://localhost/secretosMarinos/public/ecosistemas), busca `manglar` y entra a su ficha.
+3. Comprueba que la ficha del manglar muestra sus especies asociadas.
+4. Abre [http://localhost/secretosMarinos/public/especies](http://localhost/secretosMarinos/public/especies) y filtra por texto, ecosistema y conservación.
+5. Como admin, prueba CRUD en `/admin/ecosistemas` y `/admin/especies`, incluyendo una imagen válida.
+6. Intenta subir un archivo no imagen o mayor de 5 MB → debe rechazarse.
+7. Edita sin subir imagen → conserva la actual; reemplázala o marca “Eliminar imagen”.
+8. Como docente, crea una especie → puede editarla/borrarla; una especie ajena aparece como solo lectura.
+9. Como docente, `/admin/ecosistemas/crear` debe rechazar la operación.
+10. Como estudiante, las rutas `/admin/especies` y `/admin/ecosistemas` deben redirigir al panel.
+11. Publica/despublica una especie o ecosistema y verifica su aparición en el catálogo público.
+
 ---
 
-## 8. Checklist de prueba completa (hasta Paso 3 + perfil)
+## 8. Checklist de prueba completa (hasta Paso 4 + perfil)
 
 Usa esta lista como guía de verificación integral del sistema actual:
 
@@ -307,6 +359,13 @@ Usa esta lista como guía de verificación integral del sistema actual:
 - [ ] Docente: solo muta lo propio; categorías solo lectura  
 - [ ] Estudiante: no entra al panel admin  
 - [ ] Formularios admin/auth llevan token CSRF  
+- [ ] `/ecosistemas` busca y muestra fichas con especies asociadas
+- [ ] `/especies` busca y filtra por ecosistema y conservación
+- [ ] Admin: CRUD total de ecosistemas y especies
+- [ ] Docente: especies propias; ecosistemas solo lectura
+- [ ] Estudiante: sin acceso a administración científica
+- [ ] Imágenes válidas se cargan; formatos/tamaños inválidos se rechazan
+- [ ] Borrar ecosistema conserva las especies con relación `NULL`
 
 ### Usuarios demo (seed)
 
@@ -327,6 +386,14 @@ Tablas principales creadas en `schema.sql`:
 `roles`, `usuarios`, `categorias_contenido`, `contenidos`, `ecosistemas`, `especies`, `noticias`, `campanias`, `reportes_ambientales`, `insignias`, `usuario_insignia`, `puntos_usuario`, `auditoria`
 
 Integridad referencial con Foreign Keys y políticas `ON DELETE` / `ON UPDATE` (ej. categoría→contenido `SET NULL`; rol→usuario `RESTRICT`; puentes N:M `CASCADE`).
+
+Para actualizar una instalación anterior al Paso 4:
+
+```powershell
+c:\xampp\mysql\bin\mysql.exe -u root secretos_marinos -e "SOURCE c:/xampp/htdocs/secretosMarinos/database/migrations/004_species_ecosystems.sql"
+```
+
+La migración se ejecuta **una sola vez**. Una instalación desde cero usa directamente `schema.sql` + `seed.sql`.
 
 Credenciales locales por defecto (XAMPP) en `config/database.php`:
 
@@ -366,6 +433,8 @@ Layouts: público (`views/layouts/main.php`) y administración (`views/layouts/a
 - Límite básico de intentos fallidos de login  
 - Autogestión de perfil limitada al propio usuario (sin escalada de rol)  
 - Borrado de cuenta con confirmación; protección del último administrador  
+- Carga de imágenes mediante MIME real (`finfo`), tamaño máximo y nombre aleatorio
+- Imágenes almacenadas fuera del código versionado y sin ejecución PHP
 
 ---
 
@@ -407,7 +476,8 @@ Prefijos útiles: `feat`, `fix`, `docs`, `refactor`, `chore`, `test`, `style`.
 3. Importar `database/schema.sql` y `database/seed.sql`  
 4. Ajustar `config/database.php` si tu MySQL tiene contraseña  
 5. Abrir `http://localhost/secretosMarinos/public/`  
-6. Seguir la **checklist de la sección 8** para validar Pasos 1–3 y el perfil de usuario  
+6. Si la BD ya existía antes del Paso 4, ejecutar `database/migrations/004_species_ecosystems.sql` una sola vez
+7. Seguir la **checklist de la sección 8** para validar Pasos 1–4 y el perfil de usuario
 
 ---
 

@@ -43,27 +43,27 @@ INSERT INTO contenidos (categoria_id, autor_id, titulo, slug, resumen, cuerpo, n
  'intermedio', 1);
 
 -- Ecosistemas
-INSERT INTO ecosistemas (id, nombre, slug, descripcion, funcion_ecologica, amenazas, buenas_practicas) VALUES
+INSERT INTO ecosistemas (id, nombre, slug, descripcion, funcion_ecologica, amenazas, buenas_practicas, publicado) VALUES
 (1, 'Arrecife de coral', 'arrecife-de-coral',
  'Ecosistema costero formado por corales y biodiversidad asociada.',
  'Protege costas, alberga peces y sostiene pesca artesanal.',
  'Blanqueamiento, turismo irresponsable, contaminación.',
- 'No tocar corales, reducir plásticos, apoyar áreas protegidas.'),
+ 'No tocar corales, reducir plásticos, apoyar áreas protegidas.', 1),
 (2, 'Manglar', 'manglar',
  'Bosque costero adaptado a agua salobre.',
  'Nurseries de peces, captura de carbono, barrera natural.',
  'Tala, rellenos, vertimientos.',
- 'Restaurar, no rellenar, gestionar residuos.');
+ 'Restaurar, no rellenar, gestionar residuos.', 1);
 
 -- Especies
-INSERT INTO especies (ecosistema_id, nombre_comun, nombre_cientifico, slug, clasificacion, habitat, distribucion, amenazas, estado_conservacion, descripcion, publicado) VALUES
-(1, 'Pez loro', 'Scaridae', 'pez-loro',
+INSERT INTO especies (ecosistema_id, autor_id, nombre_comun, nombre_cientifico, slug, clasificacion, habitat, distribucion, amenazas, estado_conservacion, descripcion, publicado) VALUES
+(1, 2, 'Pez loro', 'Scaridae', 'pez-loro',
  'Familia Scaridae', 'Arrecifes coralinos', 'Mares tropicales',
- 'Sobrepesca y degradación de arrecifes', 'Preocupación menor / variable según especie',
+ 'Sobrepesca y degradación de arrecifes', 'Preocupación menor',
  'Herbívoro clave que ayuda a controlar algas en arrecifes.', 1),
-(2, 'Cangrejo violinista', 'Uca sp.', 'cangrejo-violinista',
+(2, 2, 'Cangrejo violinista', 'Uca sp.', 'cangrejo-violinista',
  'Género Uca', 'Lodos y manglares', 'Costas tropicales y subtropicales',
- 'Pérdida de hábitat', 'No evaluado de forma uniforme',
+ 'Pérdida de hábitat', 'No evaluado',
  'Indicador de salud en zonas intermareales de manglar.', 1);
 
 -- Noticias

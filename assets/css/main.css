@@ -314,7 +314,7 @@ h1, h2, h3 {
 
 .feature-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
   gap: var(--space-4);
 }
 
@@ -828,6 +828,155 @@ h1, h2, h3 {
   color: #475569;
 }
 
+/* Catálogo científico — Paso 4 */
+.filter-bar--simple {
+  grid-template-columns: 1fr auto;
+}
+
+.filter-bar--species {
+  grid-template-columns: 1.5fr 1fr 1fr auto;
+}
+
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.catalog-card {
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(8, 61, 119, 0.1);
+  border-radius: calc(var(--radius) + 0.15rem);
+  box-shadow: 0 8px 24px rgba(8, 61, 119, 0.08);
+}
+
+.catalog-card__image,
+.catalog-card__placeholder {
+  width: 100%;
+  height: 13rem;
+  object-fit: cover;
+}
+
+.catalog-card__placeholder,
+.detail-hero__placeholder {
+  background:
+    radial-gradient(circle at 30% 30%, rgba(46, 196, 182, 0.55), transparent 35%),
+    linear-gradient(145deg, var(--color-azul-oceano), var(--color-azul-profundo));
+}
+
+.catalog-card__body {
+  padding: var(--space-4);
+}
+
+.catalog-card__body > :last-child {
+  margin-bottom: 0;
+}
+
+.catalog-card__title {
+  margin: 0 0 0.25rem;
+  font-size: 1.3rem;
+}
+
+.catalog-card__title a {
+  color: var(--color-azul-profundo);
+  text-decoration: none;
+}
+
+.catalog-card--compact .catalog-card__body {
+  min-height: 12rem;
+}
+
+.scientific-name {
+  margin: 0.2rem 0 0.7rem;
+  font-style: italic;
+  color: #475569;
+}
+
+.scientific-name--large {
+  font-size: 1.25rem;
+}
+
+.detail-hero {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: var(--space-5);
+  align-items: center;
+}
+
+.detail-hero__image,
+.detail-hero__placeholder {
+  width: 100%;
+  min-height: 20rem;
+  max-height: 28rem;
+  object-fit: cover;
+  border-radius: calc(var(--radius) + 0.15rem);
+}
+
+.detail-sections {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.detail-sections section {
+  padding-top: var(--space-3);
+  border-top: 2px solid rgba(8, 61, 119, 0.12);
+}
+
+.detail-sections h2,
+.related-section h2 {
+  font-size: 1.35rem;
+}
+
+.related-section {
+  margin-top: var(--space-6);
+}
+
+.scientific-data {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+  margin-top: var(--space-5);
+  border-top: 1px solid rgba(8, 61, 119, 0.12);
+}
+
+.scientific-data div {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid rgba(8, 61, 119, 0.12);
+}
+
+.scientific-data dt {
+  font-weight: 700;
+  color: var(--color-azul-profundo);
+}
+
+.scientific-data dd {
+  margin: 0.3rem 0 0;
+}
+
+.admin-image-preview {
+  width: min(100%, 22rem);
+  max-height: 15rem;
+  object-fit: cover;
+  margin-top: var(--space-3);
+  border-radius: var(--radius);
+}
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: var(--space-3) 0;
+  font-weight: 600;
+}
+
+.check-row input {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
 /* Admin shell */
 .admin-body {
   background: #f1f5f9;
@@ -1006,7 +1155,11 @@ h1, h2, h3 {
   .featured-list,
   .form-grid-2,
   .filter-bar,
-  .profile-grid {
+  .profile-grid,
+  .catalog-grid,
+  .detail-hero,
+  .detail-sections,
+  .scientific-data {
     grid-template-columns: 1fr;
   }
 
