@@ -828,6 +828,47 @@ h1, h2, h3 {
   color: #475569;
 }
 
+.badge--warn {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge--danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.cancel-reason {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  color: #7f1d1d;
+}
+
+.cancel-reason-field {
+  padding: var(--space-3);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  border-radius: var(--radius);
+  background: rgba(254, 226, 226, 0.35);
+}
+
+.form-alert--info {
+  background: rgba(14, 165, 233, 0.12);
+  color: #0c4a6e;
+  padding: var(--space-3);
+  border-radius: var(--radius);
+  margin-bottom: var(--space-3);
+}
+
+.review-summary {
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid rgba(8, 61, 119, 0.12);
+}
+
+.review-summary p {
+  margin: 0 0 0.65rem;
+}
+
 /* Catálogo científico — Paso 4 */
 .filter-bar--simple {
   grid-template-columns: 1fr auto;

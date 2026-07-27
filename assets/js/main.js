@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMobileNav();
   initAuthForms();
   initFocusForm();
+  initCampaignCancelReason();
 });
 
 /**
@@ -22,6 +23,35 @@ function initFocusForm() {
   if (target) {
     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+}
+
+/**
+ * Muestra u oculta el motivo de cancelación según el estado de la campaña.
+ * La validación definitiva la hace el backend (CampaignService).
+ */
+function initCampaignCancelReason() {
+  const form = document.querySelector('[data-campaign-form]');
+  if (!form) {
+    return;
+  }
+
+  const estado = form.querySelector('[data-campaign-estado]');
+  const reasonBox = form.querySelector('[data-cancel-reason]');
+  const reasonField = form.querySelector('#motivo_cancelacion');
+  if (!estado || !reasonBox) {
+    return;
+  }
+
+  const sync = () => {
+    const cancelled = estado.value === 'cancelada';
+    reasonBox.hidden = !cancelled;
+    if (reasonField) {
+      reasonField.required = cancelled;
+    }
+  };
+
+  estado.addEventListener('change', sync);
+  sync();
 }
 
 /**

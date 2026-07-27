@@ -205,7 +205,10 @@ CREATE TABLE campanias (
   fecha_fin DATE NULL,
   estado ENUM('borrador','activa','finalizada','cancelada') NOT NULL DEFAULT 'borrador',
   imagen VARCHAR(255) NULL,
+  motivo_cancelacion TEXT NULL COMMENT 'Obligatorio al cancelar; se conserva como historial',
+  cancelada_en DATETIME NULL,
   creado_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  actualizado_en DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   UNIQUE KEY uk_campanias_slug (slug),
   KEY idx_campanias_responsable (responsable_id),
@@ -223,19 +226,26 @@ DROP TABLE IF EXISTS reportes_ambientales;
 CREATE TABLE reportes_ambientales (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   usuario_id INT UNSIGNED NULL,
+  revisor_id INT UNSIGNED NULL,
   titulo VARCHAR(180) NOT NULL,
   descripcion TEXT NOT NULL,
   ubicacion VARCHAR(255) NULL,
   tipo ENUM('contaminacion','residuos','fauna_afectada','deterioro','otro') NOT NULL DEFAULT 'otro',
   estado ENUM('pendiente','en_revision','resuelto') NOT NULL DEFAULT 'pendiente',
   imagen VARCHAR(255) NULL,
+  notas_revision TEXT NULL,
   creado_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   actualizado_en DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   KEY idx_reportes_usuario (usuario_id),
+  KEY idx_reportes_revisor (revisor_id),
   KEY idx_reportes_estado (estado),
   CONSTRAINT fk_reportes_usuario
     FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
+    ON UPDATE CASCADE
+    ON DELETE SET NULL,
+  CONSTRAINT fk_reportes_revisor
+    FOREIGN KEY (revisor_id) REFERENCES usuarios (id)
     ON UPDATE CASCADE
     ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

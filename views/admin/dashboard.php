@@ -1,8 +1,10 @@
 <?php
-/** Dashboard admin — Pasos 3 y 4 */
+/** Dashboard admin — Pasos 3 a 5 */
 ?>
 <section class="admin-dashboard">
-    <p class="section__lead">Gestiona educación, noticias y el catálogo científico marino.</p>
+    <p class="section__lead">
+        Gestiona educación, catálogo científico, campañas y la cola de reportes ciudadanos.
+    </p>
 
     <div class="panel-grid">
         <article class="panel-stat">
@@ -26,11 +28,22 @@
             <a href="<?= url('/admin/especies') ?>">Administrar</a>
         </article>
         <article class="panel-stat">
+            <h2 class="panel-stat__label">Campañas</h2>
+            <p class="panel-stat__value"><?= (int) $stats['campanias'] ?></p>
+            <a href="<?= url('/admin/campanias') ?>">Administrar</a>
+        </article>
+        <article class="panel-stat">
+            <h2 class="panel-stat__label">Reportes</h2>
+            <p class="panel-stat__value"><?= (int) $stats['reportes'] ?></p>
+            <p class="muted"><?= (int) $stats['reportes_pendientes'] ?> pendientes</p>
+            <a href="<?= url('/admin/reportes') ?>">Revisar cola</a>
+        </article>
+        <article class="panel-stat">
             <h2 class="panel-stat__label">Accesos rápidos</h2>
             <p class="panel-actions" style="margin-top:0.75rem">
                 <a class="btn btn--primary" href="<?= url('/admin/contenidos/crear') ?>">Nuevo contenido</a>
-                <a class="btn btn--secondary" href="<?= url('/admin/noticias/crear') ?>">Nueva noticia</a>
-                <a class="btn btn--secondary" href="<?= url('/admin/especies/crear') ?>">Nueva especie</a>
+                <a class="btn btn--secondary" href="<?= url('/admin/campanias/crear') ?>">Nueva campaña</a>
+                <a class="btn btn--secondary" href="<?= url('/admin/reportes') ?>">Reportes</a>
                 <?php if (can_manage_categories()): ?>
                     <a class="btn btn--secondary" href="<?= url('/admin/categorias/crear') ?>">Nueva categoría</a>
                 <?php endif; ?>
@@ -39,7 +52,10 @@
                 <?php endif; ?>
             </p>
             <?php if (is_docente() && !is_admin()): ?>
-                <p class="form-hint">Como docente gestionas solo tus contenidos, noticias y especies. Categorías y ecosistemas son de solo lectura.</p>
+                <p class="form-hint">
+                    Como docente gestionas tus contenidos, noticias, especies y campañas.
+                    Revisas reportes; categorías y ecosistemas son de solo lectura.
+                </p>
             <?php endif; ?>
         </article>
     </div>

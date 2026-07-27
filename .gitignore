@@ -52,6 +52,12 @@ uploads/images/ecosistemas/*
 !uploads/images/especies/
 uploads/images/especies/*
 !uploads/images/especies/.gitkeep
+!uploads/images/campanias/
+uploads/images/campanias/*
+!uploads/images/campanias/.gitkeep
+!uploads/images/reportes/
+uploads/images/reportes/*
+!uploads/images/reportes/.gitkeep
 uploads/docs/*
 !uploads/docs/.gitkeep
 uploads/avatars/*

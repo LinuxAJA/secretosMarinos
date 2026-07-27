@@ -46,7 +46,8 @@ $correoValue = (string) old('correo', $user['correo'] ?? '');
 
         <div class="panel-actions">
             <a class="btn btn--primary" href="<?= url('/educacion') ?>">Ir a biblioteca</a>
-            <a class="btn btn--secondary" href="<?= url('/noticias') ?>">Ver noticias</a>
+            <a class="btn btn--secondary" href="<?= url('/reportes') ?>">Mis reportes</a>
+            <a class="btn btn--secondary" href="<?= url('/campanias') ?>">Campañas</a>
             <?php if (has_any_role(ROLE_ADMIN, ROLE_DOCENTE)): ?>
                 <a class="btn btn--secondary" href="<?= url('/admin') ?>">Administración</a>
             <?php endif; ?>

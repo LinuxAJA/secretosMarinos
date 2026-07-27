@@ -2,8 +2,8 @@
 
 Plataforma web de **alfabetización oceánica** y **acción ambiental** orientada a un entorno formativo SENA. Integra educación marina, fichas de especies y ecosistemas, campañas comunitarias, reportes ambientales y gamificación básica, todo en un stack local sin frameworks ni nube.
 
-> **Estado actual:** Paso 4 completado — catálogo científico de especies y ecosistemas, imágenes seguras y RBAC.
-> **Siguiente:** Paso 5 — campañas y reportes ambientales.
+> **Estado actual:** Paso 5 completado — campañas ambientales, reportes ciudadanos y motivo obligatorio al cancelar.
+> **Siguiente:** Paso 6 — gamificación mínima (puntos e insignias).
 
 ---
 
@@ -58,8 +58,8 @@ Desarrollar una plataforma web dinámica para informar, educar, concientizar y p
 | Panel admin básico | Dashboard + gestión de contenidos/noticias/categorías/especies/ecosistemas | Hecho (Pasos 3–4) |
 | Especies marinas | Fichas científicas, filtros, imágenes y CRUD con autoría | Hecho (Paso 4) |
 | Ecosistemas | Fichas, especies relacionadas, imágenes y CRUD admin | Hecho (Paso 4) |
-| Campañas ambientales | Objetivos, fechas, estado | Pendiente (Paso 5) |
-| Reportes ambientales | Evidencia, ubicación, estados | Pendiente (Paso 5) |
+| Campañas ambientales | Objetivos, fechas, estados y cancelación justificada | Hecho (Paso 5) |
+| Reportes ambientales | Evidencia ciudadana, cola de revisión y seguimiento | Hecho (Paso 5) |
 | Gamificación mínima | Puntos e insignias iniciales | Pendiente (Paso 6) |
 | Estadísticas básicas | KPIs simples | Pendiente (Paso 7) |
 
@@ -111,7 +111,7 @@ Navegador
 
 ---
 
-## 5. Roles y permisos (acumulado Pasos 2–4)
+## 5. Roles y permisos (acumulado Pasos 2–5)
 
 | Capacidad | Admin | Docente | Estudiante |
 |-----------|-------|---------|------------|
@@ -131,11 +131,22 @@ Navegador
 | Editar / eliminar especies de otros | Sí | No | No |
 | Ver ecosistemas en administración | Sí | Sí (solo lectura) | No |
 | Crear / editar / eliminar ecosistemas | Sí | No | No |
+| Ver campañas públicas (activa/finalizada) | Sí | Sí | Sí |
+| CRUD de campañas **propias** (`responsable_id`) | Sí | Sí | No |
+| Editar / eliminar campañas de otros | Sí | No | No |
+| Cancelar campaña (exige motivo ≥ 15 caracteres) | Sí*** | Sí*** | No |
+| Ver reportes **resueltos** en público | Sí | Sí | Sí |
+| Crear reporte ambiental | Sí | Sí | Sí**** |
+| Editar / eliminar **propio** reporte pendiente | Sí | Sí | Sí |
+| Revisar reportes (estado + notas) | Sí | Sí | No |
+| Eliminar cualquier reporte | Sí | No | No |
 
 \*Las cuentas admin/docente del entorno demo vienen del `seed.sql`. El registro público crea rol **estudiante**.  
-\*\*Un administrador **no** puede eliminarse si es el único admin activo.
+\*\*Un administrador **no** puede eliminarse si es el único admin activo.  
+\*\*\*Solo sobre campañas que el rol pueda gestionar.  
+\*\*\*\*Requiere sesión iniciada (registro/login).
 
-Políticas en código: `is_admin()`, `can_manage_content()`, `can_manage_news()`, `can_manage_categories()`, `can_manage_species()` y `can_manage_ecosystems()` en `app/helpers/helpers.php`. La autorización se valida en servidor (controllers), no solo en la UI.
+Políticas en código: las de Pasos 3–4 más `can_manage_campaigns()`, `can_create_report()`, `can_view_report()`, `can_edit_own_report()`, `can_review_reports()` y `can_delete_any_report()` en `app/helpers/helpers.php`. La autorización se valida en servidor (controllers), no solo en la UI.
 
 ---
 
@@ -148,7 +159,7 @@ Políticas en código: `is_admin()`, `can_manage_content()`, `can_manage_news()`
 | 3 | Educativo + noticias + RBAC admin | Completado |
 | — | Perfil de usuario (complemento de auth/panel) | Completado |
 | 4 | Especies y ecosistemas | Completado |
-| 5 | Campañas y reportes | Pendiente |
+| 5 | Campañas y reportes | Completado |
 | 6 | Gamificación mínima | Pendiente |
 | 7 | Admin ampliado y estadísticas básicas | Pendiente |
 | 8 | Hardening, pruebas y entrega | Pendiente |
@@ -157,7 +168,7 @@ Políticas en código: `is_admin()`, `can_manage_content()`, `can_manage_news()`
 
 ## 7. Guía acumulada por pasos
 
-Cada paso conserva su alcance y su forma de prueba. Al final de esta sección hay una **checklist completa** del sistema hasta el Paso 4 + perfil.
+Cada paso conserva su alcance y su forma de prueba. Al final de esta sección hay una **checklist completa** del sistema hasta el Paso 5 + perfil.
 
 ### 7.1 Paso 1 — Cimientos (completado)
 
@@ -336,9 +347,49 @@ Cada paso conserva su alcance y su forma de prueba. Al final de esta sección ha
 10. Como estudiante, las rutas `/admin/especies` y `/admin/ecosistemas` deben redirigir al panel.
 11. Publica/despublica una especie o ecosistema y verifica su aparición en el catálogo público.
 
+### 7.6 Paso 5 — Campañas y reportes (completado)
+
+#### Qué incluye
+
+**Campañas ambientales**
+
+- `/campanias`: listado público de campañas `activa` y `finalizada`, con búsqueda y filtro
+- Ficha `/campanias/{slug}` con objetivo, fechas, responsable e imagen
+- Admin CRUD en `/admin/campanias`
+- RBAC: admin global; docente solo campañas donde es `responsable_id`
+- **Regla de cancelación:** al pasar a `cancelada` es obligatorio un `motivo_cancelacion` (≥ 15 caracteres); se guarda `cancelada_en` y el motivo permanece visible en administración (también como historial si se reactiva)
+
+**Reportes ambientales**
+
+- Público: solo reportes `resuelto` en `/reportes`
+- Crear reporte: cualquier usuario autenticado (`/reportes/crear`)
+- Autor: edita/elimina solo mientras esté `pendiente`
+- Staff (admin/docente): cola `/admin/reportes`, cambio de estado + notas de revisión
+- Solo admin elimina reportes ajenos
+- Evidencia fotográfica opcional vía `ImageUploadService`
+
+**Base de datos**
+
+- `campanias.motivo_cancelacion`, `campanias.cancelada_en`, `campanias.actualizado_en`
+- `reportes_ambientales.revisor_id`, `reportes_ambientales.notas_revision`
+- Migración: `database/migrations/005_campaigns_reports.sql`
+
+#### Cómo probar el Paso 5
+
+1. Ejecuta una sola vez `database/migrations/005_campaigns_reports.sql` si la BD ya existía.
+2. Abre `/campanias` y la ficha `guardianes-del-manglar`.
+3. Como docente, crea una campaña, publícala como `activa` y verifica el catálogo.
+4. Intenta cancelarla **sin** motivo → debe fallar la validación.
+5. Cancélala **con** motivo ≥ 15 caracteres → aparece el motivo en `/admin/campanias`.
+6. Como estudiante, crea un reporte en `/reportes/crear` → queda `pendiente` y aparece en “Mis reportes”.
+7. Verifica que el público no ve reportes pendientes; solo resueltos.
+8. Como docente, revisa el reporte (`en_revision` → `resuelto`) con nota.
+9. Como autor, intenta editar un reporte ya en revisión → rechazo.
+10. Como estudiante, `/admin/campanias` y `/admin/reportes` deben redirigir sin permiso.
+
 ---
 
-## 8. Checklist de prueba completa (hasta Paso 4 + perfil)
+## 8. Checklist de prueba completa (hasta Paso 5 + perfil)
 
 Usa esta lista como guía de verificación integral del sistema actual:
 
@@ -366,6 +417,13 @@ Usa esta lista como guía de verificación integral del sistema actual:
 - [ ] Estudiante: sin acceso a administración científica
 - [ ] Imágenes válidas se cargan; formatos/tamaños inválidos se rechazan
 - [ ] Borrar ecosistema conserva las especies con relación `NULL`
+- [ ] `/campanias` lista activas/finalizadas y muestra fichas
+- [ ] Cancelar campaña sin motivo falla; con motivo queda registrado en admin
+- [ ] Docente solo muta campañas de su responsabilidad
+- [ ] Usuario autenticado crea reporte; aparece en Mis reportes
+- [ ] Público solo ve reportes resueltos
+- [ ] Staff revisa estado + notas; autor no edita tras salir de pendiente
+- [ ] Solo admin elimina reportes ajenos
 
 ### Usuarios demo (seed)
 
@@ -387,13 +445,17 @@ Tablas principales creadas en `schema.sql`:
 
 Integridad referencial con Foreign Keys y políticas `ON DELETE` / `ON UPDATE` (ej. categoría→contenido `SET NULL`; rol→usuario `RESTRICT`; puentes N:M `CASCADE`).
 
-Para actualizar una instalación anterior al Paso 4:
+Para actualizar una instalación anterior:
 
 ```powershell
+# Paso 4 (si aún no se aplicó)
 c:\xampp\mysql\bin\mysql.exe -u root secretos_marinos -e "SOURCE c:/xampp/htdocs/secretosMarinos/database/migrations/004_species_ecosystems.sql"
+
+# Paso 5
+c:\xampp\mysql\bin\mysql.exe -u root secretos_marinos -e "SOURCE c:/xampp/htdocs/secretosMarinos/database/migrations/005_campaigns_reports.sql"
 ```
 
-La migración se ejecuta **una sola vez**. Una instalación desde cero usa directamente `schema.sql` + `seed.sql`.
+Cada migración se ejecuta **una sola vez**. Una instalación desde cero usa directamente `schema.sql` + `seed.sql`.
 
 Credenciales locales por defecto (XAMPP) en `config/database.php`:
 
@@ -435,6 +497,8 @@ Layouts: público (`views/layouts/main.php`) y administración (`views/layouts/a
 - Borrado de cuenta con confirmación; protección del último administrador  
 - Carga de imágenes mediante MIME real (`finfo`), tamaño máximo y nombre aleatorio
 - Imágenes almacenadas fuera del código versionado y sin ejecución PHP
+- Cancelación de campañas con motivo obligatorio (trazabilidad en admin)
+- Reportes: ownership del autor + revisión staff; pendientes no públicos
 
 ---
 
@@ -476,8 +540,8 @@ Prefijos útiles: `feat`, `fix`, `docs`, `refactor`, `chore`, `test`, `style`.
 3. Importar `database/schema.sql` y `database/seed.sql`  
 4. Ajustar `config/database.php` si tu MySQL tiene contraseña  
 5. Abrir `http://localhost/secretosMarinos/public/`  
-6. Si la BD ya existía antes del Paso 4, ejecutar `database/migrations/004_species_ecosystems.sql` una sola vez
-7. Seguir la **checklist de la sección 8** para validar Pasos 1–4 y el perfil de usuario
+6. Si la BD ya existía, aplicar migraciones pendientes (`004` y/o `005`) una sola vez cada una
+7. Seguir la **checklist de la sección 8** para validar Pasos 1–5 y el perfil de usuario
 
 ---
 

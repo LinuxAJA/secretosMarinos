@@ -56,7 +56,11 @@
             </article>
             <article class="feature">
                 <h3 class="feature__title">Campañas y reportes</h3>
-                <p class="feature__text">Participación ciudadana con evidencias y seguimiento de casos.</p>
+                <p class="feature__text">Participación ciudadana con seguimiento de casos y acciones colectivas.</p>
+                <p>
+                    <a href="<?= url('/campanias') ?>">Ver campañas</a>
+                    · <a href="<?= url('/reportes') ?>">Ver reportes</a>
+                </p>
             </article>
         </div>
     </div>
