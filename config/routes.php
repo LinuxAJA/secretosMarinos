@@ -14,21 +14,26 @@
  * Paso 3: educación + noticias (público) y CRUD admin
  * Complemento auth: edición de perfil en /panel
  * Paso 4: especies marinas + ecosistemas
+ * Paso 5: campañas ambientales + reportes ciudadanos
  * ============================================================================
  */
 
+use App\Controllers\Admin\CampaignController as AdminCampaignController;
 use App\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Controllers\Admin\ContentController as AdminContentController;
 use App\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Controllers\Admin\EcosystemController as AdminEcosystemController;
 use App\Controllers\Admin\NewsController as AdminNewsController;
+use App\Controllers\Admin\ReportController as AdminReportController;
 use App\Controllers\Admin\SpeciesController as AdminSpeciesController;
 use App\Controllers\AuthController;
+use App\Controllers\CampaignController;
 use App\Controllers\EducationController;
 use App\Controllers\EcosystemController;
 use App\Controllers\HomeController;
 use App\Controllers\NewsController;
 use App\Controllers\PanelController;
+use App\Controllers\ReportController;
 use App\Controllers\SpeciesController;
 use App\Core\Router;
 
@@ -63,6 +68,20 @@ $router->get('/ecosistemas', [EcosystemController::class, 'index']);
 $router->get('/ecosistemas/{slug}', [EcosystemController::class, 'show']);
 $router->get('/especies', [SpeciesController::class, 'index']);
 $router->get('/especies/{slug}', [SpeciesController::class, 'show']);
+
+// Campañas (público) — Paso 5
+$router->get('/campanias', [CampaignController::class, 'index']);
+$router->get('/campanias/{slug}', [CampaignController::class, 'show']);
+
+// Reportes ambientales (público + ciudadano autenticado) — Paso 5
+// Rutas estáticas antes de {id}
+$router->get('/reportes', [ReportController::class, 'index']);
+$router->get('/reportes/crear', [ReportController::class, 'create']);
+$router->post('/reportes', [ReportController::class, 'store']);
+$router->get('/reportes/{id}/editar', [ReportController::class, 'edit']);
+$router->post('/reportes/{id}', [ReportController::class, 'update']);
+$router->post('/reportes/{id}/eliminar', [ReportController::class, 'destroy']);
+$router->get('/reportes/{id}', [ReportController::class, 'show']);
 
 // Admin dashboard
 $router->get('/admin', [AdminDashboardController::class, 'index']);
@@ -106,3 +125,17 @@ $router->post('/admin/especies', [AdminSpeciesController::class, 'store']);
 $router->get('/admin/especies/{id}/editar', [AdminSpeciesController::class, 'edit']);
 $router->post('/admin/especies/{id}', [AdminSpeciesController::class, 'update']);
 $router->post('/admin/especies/{id}/eliminar', [AdminSpeciesController::class, 'destroy']);
+
+// Admin campañas — admin global; docente solo responsabilidad propia
+$router->get('/admin/campanias', [AdminCampaignController::class, 'index']);
+$router->get('/admin/campanias/crear', [AdminCampaignController::class, 'create']);
+$router->post('/admin/campanias', [AdminCampaignController::class, 'store']);
+$router->get('/admin/campanias/{id}/editar', [AdminCampaignController::class, 'edit']);
+$router->post('/admin/campanias/{id}', [AdminCampaignController::class, 'update']);
+$router->post('/admin/campanias/{id}/eliminar', [AdminCampaignController::class, 'destroy']);
+
+// Admin reportes — cola de revisión (admin/docente); eliminar solo admin
+$router->get('/admin/reportes', [AdminReportController::class, 'index']);
+$router->get('/admin/reportes/{id}/editar', [AdminReportController::class, 'edit']);
+$router->post('/admin/reportes/{id}', [AdminReportController::class, 'update']);
+$router->post('/admin/reportes/{id}/eliminar', [AdminReportController::class, 'destroy']);

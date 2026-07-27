@@ -236,6 +236,116 @@ function can_manage_species(?array $item = null): bool
 }
 
 /**
+ * ---------------------------------------------------------------------------
+ * Políticas Paso 5 — Campañas y reportes
+ * ---------------------------------------------------------------------------
+ */
+
+/**
+ * Campañas: admin global; docente solo si es responsable_id.
+ *
+ * @param array<string,mixed>|null $item Fila con responsable_id (null = alta nueva)
+ */
+function can_manage_campaigns(?array $item = null): bool
+{
+    if (!is_logged_in()) {
+        return false;
+    }
+
+    if (is_admin()) {
+        return true;
+    }
+
+    if (!is_docente()) {
+        return false;
+    }
+
+    // Alta nueva: el docente puede crear (quedará como responsable)
+    if ($item === null) {
+        return true;
+    }
+
+    $responsableId = isset($item['responsable_id']) ? (int) $item['responsable_id'] : 0;
+    $userId = (int) (current_user()['id'] ?? 0);
+
+    return $responsableId > 0 && $responsableId === $userId;
+}
+
+/**
+ * ¿Puede crear un reporte ambiental? Cualquier usuario autenticado.
+ */
+function can_create_report(): bool
+{
+    return is_logged_in();
+}
+
+/**
+ * ¿Puede ver un reporte concreto?
+ * - Staff (admin/docente): cualquiera
+ * - Autor: el suyo
+ * - Público anónimo: solo si está resuelto (se valida en controller)
+ *
+ * @param array<string,mixed> $report
+ */
+function can_view_report(array $report): bool
+{
+    if (can_review_reports()) {
+        return true;
+    }
+
+    if (!is_logged_in()) {
+        return ($report['estado'] ?? '') === 'resuelto';
+    }
+
+    $ownerId = isset($report['usuario_id']) ? (int) $report['usuario_id'] : 0;
+    $userId = (int) (current_user()['id'] ?? 0);
+
+    if ($ownerId > 0 && $ownerId === $userId) {
+        return true;
+    }
+
+    return ($report['estado'] ?? '') === 'resuelto';
+}
+
+/**
+ * ¿Puede editar/eliminar su propio reporte? Solo el autor y solo si está pendiente.
+ *
+ * @param array<string,mixed> $report
+ */
+function can_edit_own_report(array $report): bool
+{
+    if (!is_logged_in()) {
+        return false;
+    }
+
+    if (($report['estado'] ?? '') !== 'pendiente') {
+        return false;
+    }
+
+    $ownerId = isset($report['usuario_id']) ? (int) $report['usuario_id'] : 0;
+    $userId = (int) (current_user()['id'] ?? 0);
+
+    return $ownerId > 0 && $ownerId === $userId;
+}
+
+/**
+ * Staff que revisa reportes (cambia estado y deja notas): admin y docente.
+ */
+function can_review_reports(): bool
+{
+    return is_admin() || is_docente();
+}
+
+/**
+ * Eliminar cualquier reporte (moderación): solo admin.
+ * El autor usa can_edit_own_report() mientras esté pendiente.
+ */
+function can_delete_any_report(): bool
+{
+    return is_admin();
+}
+
+/**
  * Bloquea la acción si no hay permiso: flash + redirect.
  */
 function deny_unless(bool $allowed, string $message, string $redirectTo): void

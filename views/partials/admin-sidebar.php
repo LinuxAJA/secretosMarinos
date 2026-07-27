@@ -15,6 +15,8 @@ $user = current_user();
         <a href="<?= url('/admin/noticias') ?>">Noticias</a>
         <a href="<?= url('/admin/ecosistemas') ?>">Ecosistemas</a>
         <a href="<?= url('/admin/especies') ?>">Especies</a>
+        <a href="<?= url('/admin/campanias') ?>">Campañas</a>
+        <a href="<?= url('/admin/reportes') ?>">Reportes</a>
         <a href="<?= url('/panel') ?>">Mi panel</a>
     </nav>
 
