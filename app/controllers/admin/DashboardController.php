@@ -4,7 +4,7 @@
  * Admin/DashboardController.php — Panel de administración
  * ============================================================================
  * Acceso: admin y docente.
- * Agrega métricas de Pasos 3–5 (educación, catálogo y participación).
+ * Agrega métricas de Pasos 3–6 (educación, catálogo, participación y gamificación).
  * ============================================================================
  */
 
@@ -12,6 +12,7 @@ namespace App\Controllers\Admin;
 
 use App\Core\Controller;
 use App\Middlewares\AuthMiddleware;
+use App\Repositories\BadgeRepository;
 use App\Repositories\CampaignRepository;
 use App\Repositories\ContentRepository;
 use App\Repositories\EcosystemRepository;
@@ -32,6 +33,7 @@ class DashboardController extends Controller
         $species = new SpeciesRepository();
         $campaigns = new CampaignRepository();
         $reports = new ReportRepository();
+        $badges = new BadgeRepository();
 
         $this->render('admin/dashboard', [
             'pageTitle' => 'Administración',
@@ -43,6 +45,7 @@ class DashboardController extends Controller
                 'campanias' => $campaigns->countAll(),
                 'reportes' => $reports->countAll(),
                 'reportes_pendientes' => $reports->countByEstado('pendiente'),
+                'insignias' => $badges->countAll(),
             ],
         ], 'admin');
     }

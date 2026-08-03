@@ -1,5 +1,5 @@
 -- ============================================================================
--- schema.sql — Estructura física de la BD Secretos Marinos (V1.0)
+-- schema.sql — Estructura física de la BD Misterios Del Mar (V1.0)
 -- ============================================================================
 -- Cómo importarlo en XAMPP:
 --   1. Abre phpMyAdmin → http://localhost/phpmyadmin
@@ -13,13 +13,13 @@
 --   - FKs con ON DELETE / ON UPDATE definidos
 -- ============================================================================
 
-CREATE DATABASE IF NOT EXISTS secretos_marinos
+CREATE DATABASE IF NOT EXISTS misterios_del_mar
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
-USE secretos_marinos;
+USE misterios_del_mar;
 
-SET NAMES utf8mb4;
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------------------------------------------------------
@@ -261,8 +261,10 @@ CREATE TABLE insignias (
   descripcion VARCHAR(255) NOT NULL,
   icono VARCHAR(120) NULL,
   puntos_requeridos INT UNSIGNED NOT NULL DEFAULT 0,
+  activa TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (id),
-  UNIQUE KEY uk_insignias_codigo (codigo)
+  UNIQUE KEY uk_insignias_codigo (codigo),
+  KEY idx_insignias_activa (activa)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Relación N:M usuario ↔ insignia
@@ -294,6 +296,7 @@ CREATE TABLE puntos_usuario (
   creado_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   KEY idx_puntos_usuario (usuario_id),
+  UNIQUE KEY uk_puntos_referencia (usuario_id, referencia_tipo, referencia_id),
   CONSTRAINT fk_puntos_usuario
     FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
     ON UPDATE CASCADE

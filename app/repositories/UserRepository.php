@@ -188,6 +188,24 @@ class UserRepository
     }
 
     /**
+     * Lista usuarios activos para selects admin (ajuste de puntos).
+     *
+     * @return list<array<string,mixed>>
+     */
+    public function listActiveForSelect(): array
+    {
+        return $this->db
+            ->query(
+                'SELECT u.id, u.nombre, u.correo, u.puntos, r.nombre AS rol
+                 FROM usuarios u
+                 INNER JOIN roles r ON r.id = u.rol_id
+                 WHERE u.activo = 1
+                 ORDER BY u.nombre ASC'
+            )
+            ->fetchAll();
+    }
+
+    /**
      * Obtiene el id numérico de un rol por su nombre lógico
      * (admin | docente | estudiante).
      */

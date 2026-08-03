@@ -97,7 +97,15 @@ class ReportController extends Controller
             return;
         }
 
-        flash('success', 'Revisión guardada.');
+        $message = 'Revisión guardada.';
+        if (!empty($result['newBadges'])) {
+            $names = array_map(
+                static fn(array $b): string => (string) ($b['nombre'] ?? 'Insignia'),
+                $result['newBadges']
+            );
+            $message .= ' El autor desbloqueó: ' . implode(', ', $names) . '.';
+        }
+        flash('success', $message);
         $this->redirect('/admin/reportes');
     }
 

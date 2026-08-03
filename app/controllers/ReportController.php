@@ -112,7 +112,18 @@ class ReportController extends Controller
             return;
         }
 
-        flash('success', 'Reporte enviado. Quedó en estado pendiente de revisión.');
+        $message = 'Reporte enviado. Quedó en estado pendiente de revisión.';
+        if (!empty($result['pointsAwarded'])) {
+            $message .= ' +' . \App\Services\GamificationService::POINTS_REPORT_CREATED . ' puntos ecológicos.';
+        }
+        if (!empty($result['newBadges'])) {
+            $names = array_map(
+                static fn(array $b): string => (string) ($b['nombre'] ?? 'Insignia'),
+                $result['newBadges']
+            );
+            $message .= ' ¡Nueva insignia!: ' . implode(', ', $names) . '.';
+        }
+        flash('success', $message);
         $this->redirect('/reportes/' . $result['id']);
     }
 

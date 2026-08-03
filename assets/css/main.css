@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * main.css — Sistema visual base de Secretos Marinos
+ * main.css — Sistema visual base de Misterios Del Mar
  * ============================================================================
  * Organización:
  *   1. Variables (paleta, tipografía, espaciado)
@@ -867,6 +867,85 @@ h1, h2, h3 {
 
 .review-summary p {
   margin: 0 0 0.65rem;
+}
+
+/* Gamificación — Paso 6 */
+.gamification-card {
+  margin: var(--space-5) 0;
+}
+
+.gamification-subtitle {
+  font-size: 1.1rem;
+  margin: var(--space-4) 0 var(--space-2);
+}
+
+.progress-bar {
+  height: 0.75rem;
+  border-radius: 999px;
+  background: rgba(8, 61, 119, 0.12);
+  overflow: hidden;
+  margin: var(--space-3) 0 var(--space-4);
+}
+
+.progress-bar__fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-turquesa), var(--color-azul-oceano));
+  border-radius: inherit;
+  transition: width 0.35s ease;
+}
+
+.badge-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.badge-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.badge-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.45), transparent 40%),
+    linear-gradient(145deg, var(--color-turquesa), var(--color-azul-profundo));
+}
+
+.badge-icon--sm {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.badge-icon--explorador {
+  background: linear-gradient(145deg, #38bdf8, #083d77);
+}
+
+.badge-icon--manglar {
+  background: linear-gradient(145deg, #34d399, #065f46);
+}
+
+.badge-icon--arrecife {
+  background: linear-gradient(145deg, #f472b6, #9d174d);
+}
+
+.badge-card--owned {
+  border-color: rgba(22, 101, 52, 0.35);
+  box-shadow: 0 0 0 1px rgba(22, 101, 52, 0.12);
+}
+
+.ranking-table td:first-child {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-azul-profundo);
 }
 
 /* Catálogo científico — Paso 4 */

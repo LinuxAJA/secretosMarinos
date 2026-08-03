@@ -6,7 +6,7 @@
  * TODAS las peticiones HTTP pasan por este archivo (gracias a .htaccess).
  *
  * Orden de arranque:
- *   1. Definir bandera de seguridad SECRETOS_MARINOS
+ *   1. Definir bandera de seguridad MISTERIOS_DEL_MAR
  *   2. Cargar constantes y configuración
  *   3. Activar autoload de clases
  *   4. Cargar helpers
@@ -16,7 +16,7 @@
  */
 
 // Bandera: permite que config/*.php sepan que se incluyen legalmente
-define('SECRETOS_MARINOS', true);
+define('MISTERIOS_DEL_MAR', true);
 
 // ---------------------------------------------------------------------------
 // 1) Constantes y configuración
@@ -65,11 +65,11 @@ if (session_status() === PHP_SESSION_NONE) {
 // ---------------------------------------------------------------------------
 // 5) Resolver URI limpia
 // ---------------------------------------------------------------------------
-// REQUEST_URI puede venir como: /secretosMarinos/public/especies?x=1
+// REQUEST_URI puede venir como: /misteriosDelMar/public/especies?x=1
 // Queremos solo el path relativo al front controller: /especies
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
 
-// Quita el prefijo APP_URL (/secretosMarinos/public) para dejar la ruta interna
+// Quita el prefijo APP_URL (/misteriosDelMar/public) para dejar la ruta interna
 $base = rtrim(APP_URL, '/');
 if ($base !== '' && str_starts_with($requestUri, $base)) {
     $requestUri = substr($requestUri, strlen($base));

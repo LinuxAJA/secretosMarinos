@@ -11,7 +11,7 @@
  * ============================================================================
  */
 
-if (!defined('SECRETOS_MARINOS')) {
+if (!defined('MISTERIOS_DEL_MAR')) {
     die('Acceso no permitido.');
 }
 
@@ -23,7 +23,7 @@ return [
     'port' => '3306',
 
     // Nombre de la base de datos (debe existir o crearse con schema.sql)
-    'dbname' => 'secretos_marinos',
+    'dbname' => 'misterios_del_mar',
 
     // Usuario MySQL (XAMPP por defecto: root)
     'username' => 'root',

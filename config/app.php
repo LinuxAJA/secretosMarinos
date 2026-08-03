@@ -8,7 +8,7 @@
  * ============================================================================
  */
 
-if (!defined('SECRETOS_MARINOS')) {
+if (!defined('MISTERIOS_DEL_MAR')) {
     die('Acceso no permitido.');
 }
 

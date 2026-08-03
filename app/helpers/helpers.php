@@ -10,7 +10,7 @@
 
 /**
  * Construye una URL absoluta de la aplicación.
- * Ejemplo: url('/login') → /secretosMarinos/public/login
+ * Ejemplo: url('/login') → /misteriosDelMar/public/login
  */
 function url(string $path = ''): string
 {
@@ -23,7 +23,7 @@ function url(string $path = ''): string
 
 /**
  * URL de un asset estático (CSS, JS, imágenes).
- * Ejemplo: asset('css/main.css') → /secretosMarinos/assets/css/main.css
+ * Ejemplo: asset('css/main.css') → /misteriosDelMar/assets/css/main.css
  */
 function asset(string $path): string
 {
@@ -341,6 +341,28 @@ function can_review_reports(): bool
  * El autor usa can_edit_own_report() mientras esté pendiente.
  */
 function can_delete_any_report(): bool
+{
+    return is_admin();
+}
+
+/**
+ * ---------------------------------------------------------------------------
+ * Políticas Paso 6 — Gamificación
+ * ---------------------------------------------------------------------------
+ */
+
+/**
+ * CRUD del catálogo de insignias: solo administrador.
+ */
+function can_manage_badges(): bool
+{
+    return is_admin();
+}
+
+/**
+ * Ajuste manual de puntos: solo administrador.
+ */
+function can_adjust_points(): bool
 {
     return is_admin();
 }

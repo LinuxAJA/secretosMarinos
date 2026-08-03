@@ -11,6 +11,13 @@ $profileErrors = $profileErrors ?? [];
 $passwordErrors = $passwordErrors ?? [];
 $deleteErrors = $deleteErrors ?? [];
 $activeForm = $activeForm ?? null;
+$gamification = $gamification ?? [
+    'puntos' => (int) ($user['puntos'] ?? 0),
+    'badges' => [],
+    'next' => null,
+    'history' => [],
+    'progress' => 0,
+];
 
 $rolLabel = [
     'admin'      => 'Administrador',
@@ -47,11 +54,70 @@ $correoValue = (string) old('correo', $user['correo'] ?? '');
         <div class="panel-actions">
             <a class="btn btn--primary" href="<?= url('/educacion') ?>">Ir a biblioteca</a>
             <a class="btn btn--secondary" href="<?= url('/reportes') ?>">Mis reportes</a>
-            <a class="btn btn--secondary" href="<?= url('/campanias') ?>">Campañas</a>
+            <a class="btn btn--secondary" href="<?= url('/insignias') ?>">Insignias</a>
+            <a class="btn btn--secondary" href="<?= url('/ranking') ?>">Ranking</a>
             <?php if (has_any_role(ROLE_ADMIN, ROLE_DOCENTE)): ?>
                 <a class="btn btn--secondary" href="<?= url('/admin') ?>">Administración</a>
             <?php endif; ?>
         </div>
+
+        <section class="profile-card gamification-card" aria-labelledby="progress-title">
+            <h2 id="progress-title" class="profile-card__title">Progreso ecológico</h2>
+            <p class="profile-card__lead">
+                Saldo actual: <strong><?= (int) $gamification['puntos'] ?> puntos</strong>.
+                <?php if (!empty($gamification['next'])): ?>
+                    Siguiente insignia: <?= e($gamification['next']['nombre']) ?>
+                    (<?= (int) $gamification['next']['puntos_requeridos'] ?> pts).
+                <?php else: ?>
+                    ¡Has alcanzado todas las insignias activas disponibles!
+                <?php endif; ?>
+            </p>
+
+            <div class="progress-bar" role="progressbar"
+                 aria-valuenow="<?= (int) $gamification['progress'] ?>" aria-valuemin="0" aria-valuemax="100"
+                 aria-label="Progreso hacia la siguiente insignia">
+                <span class="progress-bar__fill" style="width: <?= (int) $gamification['progress'] ?>%"></span>
+            </div>
+
+            <?php if ($gamification['badges']): ?>
+                <h3 class="gamification-subtitle">Mis insignias</h3>
+                <ul class="badge-list">
+                    <?php foreach ($gamification['badges'] as $badge): ?>
+                        <li>
+                            <span class="badge-icon badge-icon--sm badge-icon--<?= e($badge['icono'] ?: 'default') ?>" aria-hidden="true"></span>
+                            <strong><?= e($badge['nombre']) ?></strong>
+                            <span class="muted">· <?= e(format_date($badge['otorgada_en'] ?? null)) ?></span>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php else: ?>
+                <p class="muted">Aún no tienes insignias. Crea reportes ambientales para sumar puntos.</p>
+            <?php endif; ?>
+
+            <?php if ($gamification['history']): ?>
+                <h3 class="gamification-subtitle">Últimos movimientos</h3>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Motivo</th>
+                                <th>Puntos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($gamification['history'] as $row): ?>
+                                <tr>
+                                    <td><?= e(format_date($row['creado_en'] ?? null)) ?></td>
+                                    <td><?= e($row['motivo']) ?></td>
+                                    <td><?= ((int) $row['puntos'] > 0 ? '+' : '') . (int) $row['puntos'] ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
+        </section>
 
         <div class="profile-grid">
             <!-- Datos de perfil -->

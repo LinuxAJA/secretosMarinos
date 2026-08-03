@@ -104,7 +104,7 @@ class AuthController extends Controller
             return;
         }
 
-        flash('success', 'Cuenta creada correctamente. ¡Ya formas parte de Secretos Marinos!');
+        flash('success', 'Cuenta creada correctamente. ¡Ya formas parte de Misterios Del Mar!');
         $this->redirect('/panel');
     }
 

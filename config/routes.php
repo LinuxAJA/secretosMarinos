@@ -3,7 +3,7 @@
  * ============================================================================
  * routes.php — Mapa de rutas de la aplicación
  * ============================================================================
- * Aquí se declararán TODAS las URLs de Secretos Marinos.
+ * Aquí se declararán TODAS las URLs de Misterios Del Mar.
  *
  * Formato:
  * $router->get('/ruta', [ClaseController::class, 'metodo']);
@@ -15,26 +15,33 @@
  * Complemento auth: edición de perfil en /panel
  * Paso 4: especies marinas + ecosistemas
  * Paso 5: campañas ambientales + reportes ciudadanos
+ * Paso 6: gamificación (puntos e insignias)
  * ============================================================================
  */
 
+use App\Controllers\Admin\BadgeController as AdminBadgeController;
 use App\Controllers\Admin\CampaignController as AdminCampaignController;
 use App\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Controllers\Admin\ContentController as AdminContentController;
 use App\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Controllers\Admin\EcosystemController as AdminEcosystemController;
 use App\Controllers\Admin\NewsController as AdminNewsController;
+use App\Controllers\Admin\PointsController as AdminPointsController;
 use App\Controllers\Admin\ReportController as AdminReportController;
 use App\Controllers\Admin\SpeciesController as AdminSpeciesController;
+
 use App\Controllers\AuthController;
+use App\Controllers\BadgeController;
 use App\Controllers\CampaignController;
 use App\Controllers\EducationController;
 use App\Controllers\EcosystemController;
 use App\Controllers\HomeController;
 use App\Controllers\NewsController;
 use App\Controllers\PanelController;
+use App\Controllers\RankingController;
 use App\Controllers\ReportController;
 use App\Controllers\SpeciesController;
+
 use App\Core\Router;
 
 /** @var Router $router */
@@ -82,6 +89,10 @@ $router->get('/reportes/{id}/editar', [ReportController::class, 'edit']);
 $router->post('/reportes/{id}', [ReportController::class, 'update']);
 $router->post('/reportes/{id}/eliminar', [ReportController::class, 'destroy']);
 $router->get('/reportes/{id}', [ReportController::class, 'show']);
+
+// Gamificación (público) — Paso 6
+$router->get('/insignias', [BadgeController::class, 'index']);
+$router->get('/ranking', [RankingController::class, 'index']);
 
 // Admin dashboard
 $router->get('/admin', [AdminDashboardController::class, 'index']);
@@ -139,3 +150,15 @@ $router->get('/admin/reportes', [AdminReportController::class, 'index']);
 $router->get('/admin/reportes/{id}/editar', [AdminReportController::class, 'edit']);
 $router->post('/admin/reportes/{id}', [AdminReportController::class, 'update']);
 $router->post('/admin/reportes/{id}/eliminar', [AdminReportController::class, 'destroy']);
+
+// Admin insignias — CRUD solo admin; listado también docente
+$router->get('/admin/insignias', [AdminBadgeController::class, 'index']);
+$router->get('/admin/insignias/crear', [AdminBadgeController::class, 'create']);
+$router->post('/admin/insignias', [AdminBadgeController::class, 'store']);
+$router->get('/admin/insignias/{id}/editar', [AdminBadgeController::class, 'edit']);
+$router->post('/admin/insignias/{id}', [AdminBadgeController::class, 'update']);
+$router->post('/admin/insignias/{id}/eliminar', [AdminBadgeController::class, 'destroy']);
+
+// Admin ajuste de puntos — solo admin
+$router->get('/admin/puntos', [AdminPointsController::class, 'create']);
+$router->post('/admin/puntos', [AdminPointsController::class, 'store']);

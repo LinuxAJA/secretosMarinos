@@ -5,7 +5,7 @@
 -- En instalaciones nuevas, schema.sql ya contiene estos cambios.
 -- ============================================================================
 
-USE secretos_marinos;
+USE misterios_del_mar;
 SET NAMES utf8mb4;
 
 ALTER TABLE ecosistemas
@@ -28,14 +28,14 @@ UPDATE especies
 SET autor_id = (
   SELECT id
   FROM usuarios
-  WHERE correo = 'docente@secretosmarinos.local'
+  WHERE correo = 'docente@misteriosdelmar.local'
   LIMIT 1
 )
 WHERE autor_id IS NULL
   AND EXISTS (
     SELECT 1
     FROM usuarios
-    WHERE correo = 'docente@secretosmarinos.local'
+    WHERE correo = 'docente@misteriosdelmar.local'
   );
 
 -- Normaliza valores demo anteriores al catálogo controlado del Paso 4.
