@@ -199,6 +199,16 @@ class BadgeRepository
     }
 
     /**
+     * Total de asignaciones en usuario_insignia (insignias otorgadas).
+     */
+    public function countAwards(): int
+    {
+        return (int) $this->db
+            ->query('SELECT COUNT(*) FROM usuario_insignia')
+            ->fetchColumn();
+    }
+
+    /**
      * Próxima insignia activa aún no obtenida (para barra de progreso).
      *
      * @return array<string,mixed>|null

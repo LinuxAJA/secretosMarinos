@@ -181,6 +181,42 @@ class CampaignRepository
     }
 
     /**
+     * Cuenta campañas en un estado concreto.
+     */
+    public function countByEstado(string $estado): int
+    {
+        $stmt = $this->db->prepare(
+            'SELECT COUNT(*) FROM campanias WHERE estado = :estado'
+        );
+        $stmt->execute(['estado' => $estado]);
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    /**
+     * Desglose de campañas por estado (KPIs Paso 7).
+     *
+     * @return array<string,int>
+     */
+    public function countGroupedByEstado(): array
+    {
+        $rows = $this->db
+            ->query(
+                'SELECT estado, COUNT(*) AS total
+                 FROM campanias
+                 GROUP BY estado'
+            )
+            ->fetchAll();
+
+        $out = [];
+        foreach ($rows as $row) {
+            $out[(string) $row['estado']] = (int) $row['total'];
+        }
+
+        return $out;
+    }
+
+    /**
      * SELECT base con nombre del responsable.
      */
     private function baseSelect(): string

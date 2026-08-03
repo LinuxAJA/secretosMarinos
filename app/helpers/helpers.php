@@ -368,6 +368,29 @@ function can_adjust_points(): bool
 }
 
 /**
+ * ---------------------------------------------------------------------------
+ * Políticas Paso 7 — Usuarios y estadísticas
+ * ---------------------------------------------------------------------------
+ */
+
+/**
+ * Gestión administrativa de cuentas (rol / activo): solo administrador.
+ */
+function can_manage_users(): bool
+{
+    return is_admin();
+}
+
+/**
+ * Consulta de KPIs básicos: admin y docente.
+ * El bloque "Comunidad" (cuentas/roles) se filtra aparte en StatsService.
+ */
+function can_view_stats(): bool
+{
+    return is_admin() || is_docente();
+}
+
+/**
  * Bloquea la acción si no hay permiso: flash + redirect.
  */
 function deny_unless(bool $allowed, string $message, string $redirectTo): void
