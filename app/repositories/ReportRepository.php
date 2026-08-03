@@ -186,6 +186,29 @@ class ReportRepository
         return (int) $stmt->fetchColumn();
     }
 
+    /**
+     * Desglose de reportes por estado (KPIs Paso 7).
+     *
+     * @return array<string,int>
+     */
+    public function countGroupedByEstado(): array
+    {
+        $rows = $this->db
+            ->query(
+                'SELECT estado, COUNT(*) AS total
+                 FROM reportes_ambientales
+                 GROUP BY estado'
+            )
+            ->fetchAll();
+
+        $out = [];
+        foreach ($rows as $row) {
+            $out[(string) $row['estado']] = (int) $row['total'];
+        }
+
+        return $out;
+    }
+
     private function baseSelect(): string
     {
         return 'SELECT r.*,

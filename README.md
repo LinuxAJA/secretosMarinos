@@ -2,8 +2,8 @@
 
 Plataforma web de **alfabetización oceánica** y **acción ambiental** orientada a un entorno formativo SENA. Integra educación marina, fichas de especies y ecosistemas, campañas comunitarias, reportes ambientales y gamificación básica, todo en un stack local sin frameworks ni nube.
 
-> **Estado actual:** Paso 6 completado — gamificación mínima (puntos, insignias y ranking).
-> **Siguiente:** Paso 7 — admin ampliado y estadísticas básicas.
+> **Estado actual:** Paso 7 completado — admin ampliado (usuarios) y estadísticas básicas.  
+> **Siguiente:** Paso 8 — hardening, pruebas y entrega.
 
 ---
 
@@ -61,7 +61,7 @@ Desarrollar una plataforma web dinámica para informar, educar, concientizar y p
 | Campañas ambientales | Objetivos, fechas, estados y cancelación justificada | Hecho (Paso 5) |
 | Reportes ambientales | Evidencia ciudadana, cola de revisión y seguimiento | Hecho (Paso 5) |
 | Gamificación mínima | Puntos, insignias por umbral, ranking y ajuste admin | Hecho (Paso 6) |
-| Estadísticas básicas | KPIs simples | Pendiente (Paso 7) |
+| Estadísticas básicas | KPIs simples + gestión admin de usuarios | Hecho (Paso 7) |
 
 ### Fuera de V1.0 (V1.1+)
 
@@ -111,7 +111,7 @@ Navegador
 
 ---
 
-## 5. Roles y permisos (acumulado Pasos 2–6)
+## 5. Roles y permisos (acumulado Pasos 2–7)
 
 | Capacidad | Admin | Docente | Estudiante |
 |-----------|-------|---------|------------|
@@ -144,13 +144,18 @@ Navegador
 | Ver propios puntos / insignias / historial en `/panel` | Sí | Sí | Sí |
 | CRUD de insignias | Sí | No (solo lectura) | No |
 | Ajustar puntos de cualquier usuario | Sí | No | No |
+| Ver `/admin/estadisticas` (educación, catálogo, participación, gamificación) | Sí | Sí | No |
+| Ver bloque **Comunidad** (usuarios / roles / activos) | Sí | No | No |
+| Listar / ver detalle de usuarios en `/admin/usuarios` | Sí | No | No |
+| Cambiar rol o estado activo de un usuario | Sí***** | No | No |
 
 \*Las cuentas admin/docente del entorno demo vienen del `seed.sql`. El registro público crea rol **estudiante**.  
 \*\*Un administrador **no** puede eliminarse si es el único admin activo.  
 \*\*\*Solo sobre campañas que el rol pueda gestionar.  
-\*\*\*\*Requiere sesión iniciada (registro/login).
+\*\*\*\*Requiere sesión iniciada (registro/login).  
+\*\*\*\*\*No se editan nombre ni correo desde admin; no se puede dejar el sistema sin admin activo.
 
-Políticas en código: las de Pasos 3–5 más `can_manage_badges()` y `can_adjust_points()` en `app/helpers/helpers.php`. La autorización se valida en servidor (controllers), no solo en la UI.
+Políticas en código: las de Pasos 3–6 más `can_manage_users()` y `can_view_stats()` en `app/helpers/helpers.php`. La autorización se valida en servidor (controllers), no solo en la UI.
 
 ---
 
@@ -165,14 +170,14 @@ Políticas en código: las de Pasos 3–5 más `can_manage_badges()` y `can_adju
 | 4 | Especies y ecosistemas | Completado |
 | 5 | Campañas y reportes | Completado |
 | 6 | Gamificación mínima | Completado |
-| 7 | Admin ampliado y estadísticas básicas | Pendiente |
+| 7 | Admin ampliado y estadísticas básicas | Completado |
 | 8 | Hardening, pruebas y entrega | Pendiente |
 
 ---
 
 ## 7. Guía acumulada por pasos
 
-Cada paso conserva su alcance y su forma de prueba. Al final de esta sección hay una **checklist completa** del sistema hasta el Paso 6 + perfil.
+Cada paso conserva su alcance y su forma de prueba. Al final de esta sección hay una **checklist completa** del sistema hasta el Paso 7 + perfil.
 
 ### 7.1 Paso 1 — Cimientos (completado)
 
@@ -430,9 +435,46 @@ Cada paso conserva su alcance y su forma de prueba. Al final de esta sección ha
 7. Como docente, `/admin/insignias/crear` debe rechazarse; como admin, CRUD OK.
 8. Ajuste manual negativo no puede dejar saldo menor que cero.
 
+### 7.8 Paso 7 — Admin ampliado y estadísticas básicas (completado)
+
+#### Qué incluye
+
+**Gestión de usuarios** (solo admin)
+
+- `/admin/usuarios`: listado con filtros (búsqueda, rol, activo/inactivo)
+- Detalle de solo lectura (nombre, correo, rol, puntos, conteos de reportes/insignias)
+- Edición limitada: **rol** y **activo** (no nombre ni correo)
+- Protección del único administrador activo (no desactivar ni degradar si es el último)
+- Cuenta inactiva: no puede iniciar sesión (`AuthService` ya valida `activo`)
+
+**Estadísticas básicas** (admin y docente — Opción A)
+
+- `/admin/estadisticas` + dashboard enriquecido
+- KPIs on-the-fly: educación, catálogo, participación (campañas/reportes por estado), gamificación
+- Bloque **Comunidad** (totales, activos/inactivos, por rol): **solo admin**
+- Docente ve el resto de KPIs sin métricas de cuentas
+- Barras CSS (sin librerías de gráficos); sin tabla de visitas
+
+**Piezas técnicas**
+
+- `UserAdminService`, `StatsService`
+- Controllers: `Admin\UserController`, `Admin\StatsController`
+- Helpers: `can_manage_users()`, `can_view_stats()`
+- Sin migración SQL nueva (usa `rol_id` y `activo` existentes)
+
+#### Cómo probar el Paso 7
+
+1. Como admin, abre `/admin/estadisticas` y verifica el bloque Comunidad + desgloses.
+2. Abre `/admin/usuarios`, filtra por rol/estado y abre un detalle.
+3. Cambia el rol de un estudiante a docente (o viceversa) y confirma el cambio.
+4. Desactiva un usuario de prueba → el login con esa cuenta debe fallar.
+5. Con un solo admin activo, intenta desactivarlo o degradarlo → debe rechazarse.
+6. Como docente, `/admin/estadisticas` carga **sin** Comunidad; `/admin/usuarios` redirige sin permiso.
+7. Como estudiante, `/admin` y `/admin/estadisticas` no son accesibles.
+
 ---
 
-## 8. Checklist de prueba completa (hasta Paso 6 + perfil)
+## 8. Checklist de prueba completa (hasta Paso 7 + perfil)
 
 Usa esta lista como guía de verificación integral del sistema actual:
 
@@ -473,6 +515,12 @@ Usa esta lista como guía de verificación integral del sistema actual:
 - [ ] `/insignias` y `/ranking` públicos funcionan
 - [ ] Admin CRUD insignias; docente solo lectura
 - [ ] Solo admin ajusta puntos; saldo no queda negativo
+- [ ] Admin ve `/admin/estadisticas` con bloque Comunidad
+- [ ] Docente ve estadísticas sin Comunidad; sin acceso a `/admin/usuarios`
+- [ ] Admin lista/filtra usuarios y edita solo rol/activo
+- [ ] No se puede dejar el sistema sin admin activo
+- [ ] Usuario inactivo no inicia sesión
+- [ ] Nombre/correo no se editan desde administración
 
 ### Usuarios demo (seed)
 
@@ -553,6 +601,8 @@ Layouts: público (`views/layouts/main.php`) y administración (`views/layouts/a
 - Reportes: ownership del autor + revisión staff; pendientes no públicos
 - Puntos e insignias con idempotencia por referencia y transacciones
 - Ajuste manual de puntos restringido a admin (sin saldo negativo)
+- Gestión de usuarios (rol/activo) solo admin; protección del último admin activo
+- Estadísticas: bloque Comunidad filtrado en Service (no solo oculto en UI)
 
 ---
 

@@ -9,10 +9,10 @@
  * motor, solo tocas esta capa.
  *
  * Métodos:
- *   findByEmail()  → login / validar correo único
- *   findById()     → cargar perfil / sesión
- *   create()       → registro
- *   emailExists()  → validación de registro
+ *   findByEmail() / findById() → auth y perfil
+ *   create() / updateProfile() / updatePassword() / deleteById()
+ *   listAdmin() / updateRoleAndActive() → gestión admin (Paso 7)
+ *   Conteos para KPIs (activos, por rol, promedio de puntos)
  * ============================================================================
  */
 
@@ -57,7 +57,8 @@ class UserRepository
     public function findById(int $id): ?array
     {
         $sql = 'SELECT u.id, u.rol_id, u.nombre, u.correo, u.avatar,
-                       u.puntos, u.activo, r.nombre AS rol
+                       u.puntos, u.activo, u.creado_en, u.actualizado_en,
+                       r.nombre AS rol
                 FROM usuarios u
                 INNER JOIN roles r ON r.id = u.rol_id
                 WHERE u.id = :id
@@ -218,5 +219,163 @@ class UserRepository
         $id = $stmt->fetchColumn();
 
         return $id !== false ? (int) $id : null;
+    }
+
+    /**
+     * Listado admin de usuarios con filtros opcionales.
+     *
+     * @param array{q?:string,rol?:string,activo?:string} $filters
+     * @return list<array<string,mixed>>
+     */
+    public function listAdmin(array $filters = []): array
+    {
+        [$where, $params] = $this->adminFilters($filters);
+
+        $sql = 'SELECT u.id, u.nombre, u.correo, u.puntos, u.activo,
+                       u.creado_en, r.nombre AS rol
+                FROM usuarios u
+                INNER JOIN roles r ON r.id = u.rol_id'
+                . $where
+                . ' ORDER BY u.nombre ASC';
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Actualiza solo rol y estado activo (gestión admin Paso 7).
+     * No toca nombre, correo ni contraseña.
+     */
+    public function updateRoleAndActive(int $id, int $rolId, int $activo): bool
+    {
+        $stmt = $this->db->prepare(
+            'UPDATE usuarios
+             SET rol_id = :rol_id, activo = :activo
+             WHERE id = :id'
+        );
+
+        return $stmt->execute([
+            'id'     => $id,
+            'rol_id' => $rolId,
+            'activo' => $activo ? 1 : 0,
+        ]);
+    }
+
+    /** Total de cuentas registradas. */
+    public function countAll(): int
+    {
+        return (int) $this->db->query('SELECT COUNT(*) FROM usuarios')->fetchColumn();
+    }
+
+    /** Cuentas con activo = 1. */
+    public function countActive(): int
+    {
+        return (int) $this->db
+            ->query('SELECT COUNT(*) FROM usuarios WHERE activo = 1')
+            ->fetchColumn();
+    }
+
+    /** Cuentas con activo = 0. */
+    public function countInactive(): int
+    {
+        return (int) $this->db
+            ->query('SELECT COUNT(*) FROM usuarios WHERE activo = 0')
+            ->fetchColumn();
+    }
+
+    /**
+     * Desglose de usuarios por nombre de rol.
+     *
+     * @return array<string,int> ej. ['admin' => 1, 'docente' => 2, ...]
+     */
+    public function countGroupedByRole(): array
+    {
+        $rows = $this->db
+            ->query(
+                'SELECT r.nombre AS rol, COUNT(*) AS total
+                 FROM usuarios u
+                 INNER JOIN roles r ON r.id = u.rol_id
+                 GROUP BY r.nombre
+                 ORDER BY r.id ASC'
+            )
+            ->fetchAll();
+
+        $out = [];
+        foreach ($rows as $row) {
+            $out[(string) $row['rol']] = (int) $row['total'];
+        }
+
+        return $out;
+    }
+
+    /** Promedio de puntos entre usuarios activos (0 si no hay). */
+    public function averageActivePoints(): float
+    {
+        $value = $this->db
+            ->query('SELECT AVG(puntos) FROM usuarios WHERE activo = 1')
+            ->fetchColumn();
+
+        return $value !== false && $value !== null ? (float) $value : 0.0;
+    }
+
+    /**
+     * Reportes ambientales creados por un usuario (detalle admin).
+     */
+    public function countReportsByUser(int $userId): int
+    {
+        $stmt = $this->db->prepare(
+            'SELECT COUNT(*) FROM reportes_ambientales WHERE usuario_id = :id'
+        );
+        $stmt->execute(['id' => $userId]);
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    /**
+     * Insignias otorgadas a un usuario (detalle admin).
+     */
+    public function countBadgesByUser(int $userId): int
+    {
+        $stmt = $this->db->prepare(
+            'SELECT COUNT(*) FROM usuario_insignia WHERE usuario_id = :id'
+        );
+        $stmt->execute(['id' => $userId]);
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    /**
+     * @param array{q?:string,rol?:string,activo?:string} $filters
+     * @return array{0:string,1:array<string,mixed>}
+     */
+    private function adminFilters(array $filters): array
+    {
+        $where = ' WHERE 1=1';
+        $params = [];
+
+        $q = trim((string) ($filters['q'] ?? ''));
+        if ($q !== '') {
+            $like = '%' . $q . '%';
+            $where .= ' AND (u.nombre LIKE :q_nombre OR u.correo LIKE :q_correo)';
+            $params['q_nombre'] = $like;
+            $params['q_correo'] = $like;
+        }
+
+        $rol = trim((string) ($filters['rol'] ?? ''));
+        if (in_array($rol, [ROLE_ADMIN, ROLE_DOCENTE, ROLE_ESTUDIANTE], true)) {
+            $where .= ' AND r.nombre = :rol';
+            $params['rol'] = $rol;
+        }
+
+        // activo: '1' | '0' | '' (todos)
+        $activo = (string) ($filters['activo'] ?? '');
+        if ($activo === '1' || $activo === '0') {
+            $where .= ' AND u.activo = :activo';
+            $params['activo'] = (int) $activo;
+        }
+
+        return [$where, $params];
     }
 }

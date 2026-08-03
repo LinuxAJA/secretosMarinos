@@ -10,6 +10,9 @@ $user = current_user();
 
     <nav class="admin-sidebar__nav">
         <a href="<?= url('/admin') ?>">Dashboard</a>
+        <?php if (can_view_stats()): ?>
+            <a href="<?= url('/admin/estadisticas') ?>">Estadísticas</a>
+        <?php endif; ?>
         <a href="<?= url('/admin/contenidos') ?>">Contenidos</a>
         <a href="<?= url('/admin/categorias') ?>">Categorías</a>
         <a href="<?= url('/admin/noticias') ?>">Noticias</a>
@@ -20,6 +23,9 @@ $user = current_user();
         <a href="<?= url('/admin/insignias') ?>">Insignias</a>
         <?php if (can_adjust_points()): ?>
             <a href="<?= url('/admin/puntos') ?>">Puntos</a>
+        <?php endif; ?>
+        <?php if (can_manage_users()): ?>
+            <a href="<?= url('/admin/usuarios') ?>">Usuarios</a>
         <?php endif; ?>
         <a href="<?= url('/panel') ?>">Mi panel</a>
     </nav>

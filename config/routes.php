@@ -16,6 +16,7 @@
  * Paso 4: especies marinas + ecosistemas
  * Paso 5: campañas ambientales + reportes ciudadanos
  * Paso 6: gamificación (puntos e insignias)
+ * Paso 7: admin ampliado (usuarios) + estadísticas básicas
  * ============================================================================
  */
 
@@ -29,6 +30,8 @@ use App\Controllers\Admin\NewsController as AdminNewsController;
 use App\Controllers\Admin\PointsController as AdminPointsController;
 use App\Controllers\Admin\ReportController as AdminReportController;
 use App\Controllers\Admin\SpeciesController as AdminSpeciesController;
+use App\Controllers\Admin\StatsController as AdminStatsController;
+use App\Controllers\Admin\UserController as AdminUserController;
 
 use App\Controllers\AuthController;
 use App\Controllers\BadgeController;
@@ -94,8 +97,15 @@ $router->get('/reportes/{id}', [ReportController::class, 'show']);
 $router->get('/insignias', [BadgeController::class, 'index']);
 $router->get('/ranking', [RankingController::class, 'index']);
 
-// Admin dashboard
+// Admin dashboard + estadísticas (Paso 7)
 $router->get('/admin', [AdminDashboardController::class, 'index']);
+$router->get('/admin/estadisticas', [AdminStatsController::class, 'index']);
+
+// Admin usuarios — solo admin (Paso 7); rutas estáticas antes de {id}
+$router->get('/admin/usuarios', [AdminUserController::class, 'index']);
+$router->get('/admin/usuarios/{id}/editar', [AdminUserController::class, 'edit']);
+$router->post('/admin/usuarios/{id}', [AdminUserController::class, 'update']);
+$router->get('/admin/usuarios/{id}', [AdminUserController::class, 'show']);
 
 // Admin contenidos (rutas estáticas antes de {id})
 $router->get('/admin/contenidos', [AdminContentController::class, 'index']);
