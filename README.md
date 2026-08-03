@@ -1,15 +1,15 @@
-# Secretos Marinos
+# Misterios Del Mar
 
 Plataforma web de **alfabetización oceánica** y **acción ambiental** orientada a un entorno formativo SENA. Integra educación marina, fichas de especies y ecosistemas, campañas comunitarias, reportes ambientales y gamificación básica, todo en un stack local sin frameworks ni nube.
 
-> **Estado actual:** Paso 5 completado — campañas ambientales, reportes ciudadanos y motivo obligatorio al cancelar.
-> **Siguiente:** Paso 6 — gamificación mínima (puntos e insignias).
+> **Estado actual:** Paso 6 completado — gamificación mínima (puntos, insignias y ranking).
+> **Siguiente:** Paso 7 — admin ampliado y estadísticas básicas.
 
 ---
 
 ## 1. Visión del producto
 
-**Secretos Marinos** responde a la falta de una plataforma local, clara y participativa que una:
+**Misterios Del Mar** responde a la falta de una plataforma local, clara y participativa que una:
 
 - educación marina y divulgación científica;
 - participación ciudadana (campañas y reportes);
@@ -60,7 +60,7 @@ Desarrollar una plataforma web dinámica para informar, educar, concientizar y p
 | Ecosistemas | Fichas, especies relacionadas, imágenes y CRUD admin | Hecho (Paso 4) |
 | Campañas ambientales | Objetivos, fechas, estados y cancelación justificada | Hecho (Paso 5) |
 | Reportes ambientales | Evidencia ciudadana, cola de revisión y seguimiento | Hecho (Paso 5) |
-| Gamificación mínima | Puntos e insignias iniciales | Pendiente (Paso 6) |
+| Gamificación mínima | Puntos, insignias por umbral, ranking y ajuste admin | Hecho (Paso 6) |
 | Estadísticas básicas | KPIs simples | Pendiente (Paso 7) |
 
 ### Fuera de V1.0 (V1.1+)
@@ -72,7 +72,7 @@ Foros, certificados digitales, mapas interactivos, multimedia avanzada, simulaci
 ## 4. Arquitectura
 
 ```
-secretosMarinos/
+misteriosDelMar/
 ├── app/
 │   ├── controllers/       # Home, Auth, Education, News, Panel…
 │   │   └── admin/         # CRUD de contenidos, noticias, especies y ecosistemas
@@ -111,7 +111,7 @@ Navegador
 
 ---
 
-## 5. Roles y permisos (acumulado Pasos 2–5)
+## 5. Roles y permisos (acumulado Pasos 2–6)
 
 | Capacidad | Admin | Docente | Estudiante |
 |-----------|-------|---------|------------|
@@ -140,13 +140,17 @@ Navegador
 | Editar / eliminar **propio** reporte pendiente | Sí | Sí | Sí |
 | Revisar reportes (estado + notas) | Sí | Sí | No |
 | Eliminar cualquier reporte | Sí | No | No |
+| Ver catálogo `/insignias` y `/ranking` | Sí | Sí | Sí |
+| Ver propios puntos / insignias / historial en `/panel` | Sí | Sí | Sí |
+| CRUD de insignias | Sí | No (solo lectura) | No |
+| Ajustar puntos de cualquier usuario | Sí | No | No |
 
 \*Las cuentas admin/docente del entorno demo vienen del `seed.sql`. El registro público crea rol **estudiante**.  
 \*\*Un administrador **no** puede eliminarse si es el único admin activo.  
 \*\*\*Solo sobre campañas que el rol pueda gestionar.  
 \*\*\*\*Requiere sesión iniciada (registro/login).
 
-Políticas en código: las de Pasos 3–4 más `can_manage_campaigns()`, `can_create_report()`, `can_view_report()`, `can_edit_own_report()`, `can_review_reports()` y `can_delete_any_report()` en `app/helpers/helpers.php`. La autorización se valida en servidor (controllers), no solo en la UI.
+Políticas en código: las de Pasos 3–5 más `can_manage_badges()` y `can_adjust_points()` en `app/helpers/helpers.php`. La autorización se valida en servidor (controllers), no solo en la UI.
 
 ---
 
@@ -160,7 +164,7 @@ Políticas en código: las de Pasos 3–4 más `can_manage_campaigns()`, `can_cr
 | — | Perfil de usuario (complemento de auth/panel) | Completado |
 | 4 | Especies y ecosistemas | Completado |
 | 5 | Campañas y reportes | Completado |
-| 6 | Gamificación mínima | Pendiente |
+| 6 | Gamificación mínima | Completado |
 | 7 | Admin ampliado y estadísticas básicas | Pendiente |
 | 8 | Hardening, pruebas y entrega | Pendiente |
 
@@ -168,7 +172,7 @@ Políticas en código: las de Pasos 3–4 más `can_manage_campaigns()`, `can_cr
 
 ## 7. Guía acumulada por pasos
 
-Cada paso conserva su alcance y su forma de prueba. Al final de esta sección hay una **checklist completa** del sistema hasta el Paso 5 + perfil.
+Cada paso conserva su alcance y su forma de prueba. Al final de esta sección hay una **checklist completa** del sistema hasta el Paso 6 + perfil.
 
 ### 7.1 Paso 1 — Cimientos (completado)
 
@@ -194,8 +198,8 @@ Cada paso conserva su alcance y su forma de prueba. Al final de esta sección ha
    - `database/schema.sql`
    - `database/seed.sql`  
    (phpMyAdmin o CLI `mysql`).  
-3. Abre: [http://localhost/secretosMarinos/public/](http://localhost/secretosMarinos/public/)  
-4. Verifica la BD `secretos_marinos` en phpMyAdmin.  
+3. Abre: [http://localhost/misteriosDelMar/public/](http://localhost/misteriosDelMar/public/)  
+4. Verifica la BD `misterios_del_mar` en phpMyAdmin.  
 5. Confirma que cargan CSS/JS y que el menú móvil funciona.
 
 ### 7.2 Paso 2 — Autenticación y roles (completado)
@@ -213,9 +217,9 @@ Cada paso conserva su alcance y su forma de prueba. Al final de esta sección ha
 
 #### Cómo probar el Paso 2
 
-1. [http://localhost/secretosMarinos/public/registro](http://localhost/secretosMarinos/public/registro) — crea un usuario (rol estudiante).  
-2. [http://localhost/secretosMarinos/public/login](http://localhost/secretosMarinos/public/login) — inicia sesión.  
-3. Accede a [http://localhost/secretosMarinos/public/panel](http://localhost/secretosMarinos/public/panel).  
+1. [http://localhost/misteriosDelMar/public/registro](http://localhost/misteriosDelMar/public/registro) — crea un usuario (rol estudiante).  
+2. [http://localhost/misteriosDelMar/public/login](http://localhost/misteriosDelMar/public/login) — inicia sesión.  
+3. Accede a [http://localhost/misteriosDelMar/public/panel](http://localhost/misteriosDelMar/public/panel).  
 4. Sin sesión, `/panel` debe redirigir a login.  
 5. Cierra sesión con **Salir** (POST + CSRF).  
 6. Prueba usuarios demo del seed (tabla más abajo).
@@ -249,21 +253,21 @@ Cada paso conserva su alcance y su forma de prueba. Al final de esta sección ha
 
 **Público**
 
-1. [http://localhost/secretosMarinos/public/educacion](http://localhost/secretosMarinos/public/educacion)  
+1. [http://localhost/misteriosDelMar/public/educacion](http://localhost/misteriosDelMar/public/educacion)  
 2. Filtra por texto (ej. `amenazas`) y por categoría.  
 3. Abre un contenido y verifica que suben las visitas.  
-4. [http://localhost/secretosMarinos/public/noticias](http://localhost/secretosMarinos/public/noticias)  
+4. [http://localhost/misteriosDelMar/public/noticias](http://localhost/misteriosDelMar/public/noticias)  
 5. Abre una noticia destacada / publicada.
 
 **Admin (login como admin)**
 
-1. [http://localhost/secretosMarinos/public/admin](http://localhost/secretosMarinos/public/admin)  
+1. [http://localhost/misteriosDelMar/public/admin](http://localhost/misteriosDelMar/public/admin)  
 2. Crear / editar / eliminar contenidos, categorías y noticias.  
 3. Publicar un ítem y verlo en el sitio público.
 
 **Docente (RBAC)**
 
-1. Login como `docente@secretosmarinos.local`.  
+1. Login como `docente@misteriosdelmar.local`.  
 2. Puede crear contenidos/noticias; editar/borrar solo los de su autoría.  
 3. Ítems de otro autor aparecen como “Solo lectura”; URL de edición ajena → rechazo.  
 4. Categorías: sin botones de mutación; `/admin/categorias/crear` → rechazo.
@@ -290,7 +294,7 @@ Cada paso conserva su alcance y su forma de prueba. Al final de esta sección ha
 
 #### Cómo probar el perfil
 
-1. Inicia sesión (cualquier rol) y abre [http://localhost/secretosMarinos/public/panel](http://localhost/secretosMarinos/public/panel).  
+1. Inicia sesión (cualquier rol) y abre [http://localhost/misteriosDelMar/public/panel](http://localhost/misteriosDelMar/public/panel).  
 2. En **Mis datos**, cambia el nombre y guarda → debe verse en el saludo y en el header.  
 3. Intenta un correo ya usado por otra cuenta → error de validación.  
 4. En **Cambiar contraseña**, usa la actual incorrecta → rechazo.  
@@ -336,9 +340,9 @@ Cada paso conserva su alcance y su forma de prueba. Al final de esta sección ha
 #### Cómo probar el Paso 4
 
 1. En una BD existente, ejecuta una sola vez `database/migrations/004_species_ecosystems.sql`.
-2. Abre [http://localhost/secretosMarinos/public/ecosistemas](http://localhost/secretosMarinos/public/ecosistemas), busca `manglar` y entra a su ficha.
+2. Abre [http://localhost/misteriosDelMar/public/ecosistemas](http://localhost/misteriosDelMar/public/ecosistemas), busca `manglar` y entra a su ficha.
 3. Comprueba que la ficha del manglar muestra sus especies asociadas.
-4. Abre [http://localhost/secretosMarinos/public/especies](http://localhost/secretosMarinos/public/especies) y filtra por texto, ecosistema y conservación.
+4. Abre [http://localhost/misteriosDelMar/public/especies](http://localhost/misteriosDelMar/public/especies) y filtra por texto, ecosistema y conservación.
 5. Como admin, prueba CRUD en `/admin/ecosistemas` y `/admin/especies`, incluyendo una imagen válida.
 6. Intenta subir un archivo no imagen o mayor de 5 MB → debe rechazarse.
 7. Edita sin subir imagen → conserva la actual; reemplázala o marca “Eliminar imagen”.
@@ -387,13 +391,52 @@ Cada paso conserva su alcance y su forma de prueba. Al final de esta sección ha
 9. Como autor, intenta editar un reporte ya en revisión → rechazo.
 10. Como estudiante, `/admin/campanias` y `/admin/reportes` deben redirigir sin permiso.
 
+### 7.7 Paso 6 — Gamificación mínima (completado)
+
+#### Qué incluye
+
+**Motor de puntos e insignias**
+
+- `GamificationService`: único dueño de sumar/restar puntos, historial e idempotencia
+- Crear reporte → **+10** (`reporte_creado`); resolver reporte → **+15** al autor (`reporte_resuelto`)
+- Insignias por umbral (`puntos_requeridos`); el listado se ordena por ese umbral
+- Las insignias no se revocan al bajar puntos
+- Índice único `(usuario_id, referencia_tipo, referencia_id)` evita doble cobro
+
+**Superficies**
+
+- `/panel`: saldo, barra de progreso, insignias e historial
+- `/insignias`: catálogo público (marca “Obtenida” si hay sesión)
+- `/ranking`: Top 10 por puntos (sin correo)
+- `/admin/insignias`: CRUD admin; docente solo lectura
+- `/admin/puntos`: ajuste manual con motivo (solo admin; saldo ≥ 0)
+
+**Base de datos**
+
+- `insignias.activa` (sin columna `orden`: el umbral es la única fuente de verdad)
+- Unique key en `puntos_usuario` para referencias
+- Migración: `database/migrations/006_gamification.sql`
+- Si una BD local ya tenía `orden`, ejecutar también `006c_drop_insignias_orden.sql`
+- `seed.sql` declara `SET NAMES utf8mb4` para preservar acentos al importar
+
+#### Cómo probar el Paso 6
+
+1. Ejecuta una sola vez `database/migrations/006_gamification.sql` si la BD ya existía.
+2. Como estudiante, crea un reporte → debe sumar 10 puntos y verse en `/panel`.
+3. Reenvía/edita el mismo flujo sin duplicar el cobro del mismo reporte.
+4. Como docente, resuelve el reporte → el autor gana +15 (una sola vez).
+5. Con ajuste admin o varios reportes, alcanza 20 pts → insignia Explorador Marino.
+6. Abre `/insignias` y `/ranking`; verifica que el usuario aparece si tiene puntos.
+7. Como docente, `/admin/insignias/crear` debe rechazarse; como admin, CRUD OK.
+8. Ajuste manual negativo no puede dejar saldo menor que cero.
+
 ---
 
-## 8. Checklist de prueba completa (hasta Paso 5 + perfil)
+## 8. Checklist de prueba completa (hasta Paso 6 + perfil)
 
 Usa esta lista como guía de verificación integral del sistema actual:
 
-- [ ] Apache + MySQL activos; BD `secretos_marinos` importada (`schema` + `seed`)  
+- [ ] Apache + MySQL activos; BD `misterios_del_mar` importada (`schema` + `seed`)  
 - [ ] Home pública carga con estilos: `/public/`  
 - [ ] Registro crea estudiante y deja sesión iniciada  
 - [ ] Login / logout funcionan (demo o cuenta nueva)  
@@ -424,14 +467,20 @@ Usa esta lista como guía de verificación integral del sistema actual:
 - [ ] Público solo ve reportes resueltos
 - [ ] Staff revisa estado + notas; autor no edita tras salir de pendiente
 - [ ] Solo admin elimina reportes ajenos
+- [ ] Crear reporte suma +10 una sola vez; resolver suma +15 al autor una sola vez
+- [ ] Alcanzar umbral otorga insignia; no se revoca al bajar puntos
+- [ ] `/panel` muestra saldo, progreso, insignias e historial
+- [ ] `/insignias` y `/ranking` públicos funcionan
+- [ ] Admin CRUD insignias; docente solo lectura
+- [ ] Solo admin ajusta puntos; saldo no queda negativo
 
 ### Usuarios demo (seed)
 
 | Correo | Rol | Contraseña |
 |--------|-----|------------|
-| `admin@secretosmarinos.local` | admin | `Password123!` |
-| `docente@secretosmarinos.local` | docente | `Password123!` |
-| `estudiante@secretosmarinos.local` | estudiante | `Password123!` |
+| `admin@misteriosdelmar.local` | admin | `Password123!` |
+| `docente@misteriosdelmar.local` | docente | `Password123!` |
+| `estudiante@misteriosdelmar.local` | estudiante | `Password123!` |
 
 > Si el login demo falla tras reinstalar solo parte de la BD, vuelve a importar `seed.sql` o registra un usuario nuevo (el registro genera hash válido al momento).
 
@@ -449,10 +498,13 @@ Para actualizar una instalación anterior:
 
 ```powershell
 # Paso 4 (si aún no se aplicó)
-c:\xampp\mysql\bin\mysql.exe -u root secretos_marinos -e "SOURCE c:/xampp/htdocs/secretosMarinos/database/migrations/004_species_ecosystems.sql"
+c:\xampp\mysql\bin\mysql.exe -u root misterios_del_mar -e "SOURCE c:/xampp/htdocs/misteriosDelMar/database/migrations/004_species_ecosystems.sql"
 
 # Paso 5
-c:\xampp\mysql\bin\mysql.exe -u root secretos_marinos -e "SOURCE c:/xampp/htdocs/secretosMarinos/database/migrations/005_campaigns_reports.sql"
+c:\xampp\mysql\bin\mysql.exe -u root misterios_del_mar -e "SOURCE c:/xampp/htdocs/misteriosDelMar/database/migrations/005_campaigns_reports.sql"
+
+# Paso 6
+c:\xampp\mysql\bin\mysql.exe -u root misterios_del_mar -e "SOURCE c:/xampp/htdocs/misteriosDelMar/database/migrations/006_gamification.sql"
 ```
 
 Cada migración se ejecuta **una sola vez**. Una instalación desde cero usa directamente `schema.sql` + `seed.sql`.
@@ -462,7 +514,7 @@ Credenciales locales por defecto (XAMPP) en `config/database.php`:
 - Host: `127.0.0.1`
 - Usuario: `root`
 - Contraseña: *(vacía)*
-- BD: `secretos_marinos`
+- BD: `misterios_del_mar`
 
 ---
 
@@ -499,6 +551,8 @@ Layouts: público (`views/layouts/main.php`) y administración (`views/layouts/a
 - Imágenes almacenadas fuera del código versionado y sin ejecución PHP
 - Cancelación de campañas con motivo obligatorio (trazabilidad en admin)
 - Reportes: ownership del autor + revisión staff; pendientes no públicos
+- Puntos e insignias con idempotencia por referencia y transacciones
+- Ajuste manual de puntos restringido a admin (sin saldo negativo)
 
 ---
 
@@ -536,12 +590,13 @@ Prefijos útiles: `feat`, `fix`, `docs`, `refactor`, `chore`, `test`, `style`.
 ## 13. Requisitos e instalación rápida
 
 1. XAMPP con PHP 8+ y MySQL/MariaDB  
-2. Clonar este repositorio en `C:\xampp\htdocs\secretosMarinos`  
-3. Importar `database/schema.sql` y `database/seed.sql`  
-4. Ajustar `config/database.php` si tu MySQL tiene contraseña  
-5. Abrir `http://localhost/secretosMarinos/public/`  
-6. Si la BD ya existía, aplicar migraciones pendientes (`004` y/o `005`) una sola vez cada una
-7. Seguir la **checklist de la sección 8** para validar Pasos 1–5 y el perfil de usuario
+2. Clonar este repositorio en `C:\xampp\htdocs\misteriosDelMar`  
+3. Importar `database/schema.sql` y `database/seed.sql`
+   - En phpMyAdmin, al importar el seed usa charset **utf8mb4** (el archivo ya incluye `SET NAMES utf8mb4`).
+4. Ajustar `config/database.php` si tu MySQL tiene contraseña
+5. Abrir `http://localhost/misteriosDelMar/public/`
+6. Si la BD ya existía, aplicar migraciones pendientes (`004`, `005` y/o `006`) una sola vez cada una
+7. Seguir la **checklist de la sección 8** para validar Pasos 1–6 y el perfil de usuario
 
 ---
 
@@ -551,4 +606,4 @@ Proyecto formativo orientado a evidencia de competencias en desarrollo web (HTML
 
 ---
 
-**Secretos Marinos** — alfabetización oceánica · acción ambiental · formación SENA
+**Misterios Del Mar** — alfabetización oceánica · acción ambiental · formación SENA

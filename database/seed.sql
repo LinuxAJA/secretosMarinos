@@ -7,7 +7,12 @@
 -- Hash generado con: password_hash('Password123!', PASSWORD_DEFAULT)
 -- ============================================================================
 
-USE secretos_marinos;
+USE misterios_del_mar;
+
+-- Fuerza cliente UTF-8 en la sesión de importación (phpMyAdmin / mysql CLI).
+-- Sin esto, acentos y ñ pueden guardarse mal aunque la BD sea utf8mb4.
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
+SET CHARACTER SET utf8mb4;
 
 -- Roles
 INSERT INTO roles (id, nombre, descripcion) VALUES
@@ -18,11 +23,11 @@ INSERT INTO roles (id, nombre, descripcion) VALUES
 -- Usuarios demo (contraseña de todos: Password123!)
 -- Hash generado con password_hash('Password123!', PASSWORD_DEFAULT)
 INSERT INTO usuarios (id, rol_id, nombre, correo, password_hash, puntos, activo) VALUES
-(1, 1, 'Admin Marino', 'admin@secretosmarinos.local',
+(1, 1, 'Admin Marino', 'admin@misteriosdelmar.local',
  '$2y$10$3FAOKUdmqcn9wpZ3o97QNOoGqM57yamUeGqNyT.4X2urbgwTaOkR6', 0, 1),
-(2, 2, 'Docente Coral', 'docente@secretosmarinos.local',
+(2, 2, 'Docente Coral', 'docente@misteriosdelmar.local',
  '$2y$10$3FAOKUdmqcn9wpZ3o97QNOoGqM57yamUeGqNyT.4X2urbgwTaOkR6', 50, 1),
-(3, 3, 'Estudiante Marea', 'estudiante@secretosmarinos.local',
+(3, 3, 'Estudiante Marea', 'estudiante@misteriosdelmar.local',
  '$2y$10$3FAOKUdmqcn9wpZ3o97QNOoGqM57yamUeGqNyT.4X2urbgwTaOkR6', 20, 1);
 
 -- Categorías educativas
@@ -68,9 +73,9 @@ INSERT INTO especies (ecosistema_id, autor_id, nombre_comun, nombre_cientifico, 
 
 -- Noticias
 INSERT INTO noticias (autor_id, titulo, slug, resumen, cuerpo, categoria, destacada, publicada, publicado_en) VALUES
-(1, 'Lanzamiento de Secretos Marinos', 'lanzamiento-secretos-marinos',
+(1, 'Lanzamiento de Misterios Del Mar', 'lanzamiento-misterios-del-mar',
  'Nace una plataforma local de alfabetización oceánica.',
- 'Secretos Marinos integra educación, especies, campañas y reportes ambientales en un entorno XAMPP para formación SENA.',
+ 'Misterios Del Mar integra educación, especies, campañas y reportes ambientales en un entorno XAMPP para formación SENA.',
  'institucional', 1, 1, NOW());
 
 -- Campañas
@@ -86,8 +91,11 @@ INSERT INTO reportes_ambientales (usuario_id, titulo, descripcion, ubicacion, ti
  'Se observaron plásticos y redes abandonadas en la orilla tras la marea alta.',
  'Playa sector norte', 'residuos', 'pendiente');
 
--- Insignias
-INSERT INTO insignias (codigo, nombre, descripcion, icono, puntos_requeridos) VALUES
-('explorador_marino', 'Explorador Marino', 'Completó primeros contenidos educativos.', 'explorador', 20),
-('guardian_manglar', 'Guardián del Manglar', 'Participó en campañas de manglar.', 'manglar', 50),
-('defensor_arrecife', 'Defensor del Arrecife', 'Reportó o apoyó acciones de arrecife.', 'arrecife', 80);
+-- Insignias (umbrales de puntos; el motor las otorga automáticamente)
+INSERT INTO insignias (codigo, nombre, descripcion, icono, puntos_requeridos, activa) VALUES
+('explorador_marino', 'Explorador Marino',
+ 'Alcanzó 20 puntos ecológicos participando en la plataforma.', 'explorador', 20, 1),
+('guardian_manglar', 'Guardián del Manglar',
+ 'Alcanzó 50 puntos ecológicos con acciones de conservación.', 'manglar', 50, 1),
+('defensor_arrecife', 'Defensor del Arrecife',
+ 'Alcanzó 80 puntos ecológicos como referente de participación.', 'arrecife', 80, 1);

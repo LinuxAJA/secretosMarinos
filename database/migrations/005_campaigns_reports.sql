@@ -5,8 +5,8 @@
 -- En instalaciones nuevas, schema.sql ya contiene estos cambios.
 -- ============================================================================
 
-USE secretos_marinos;
-SET NAMES utf8mb4;
+USE misterios_del_mar;
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- Campañas: trazabilidad de edición y cancelación justificada
 ALTER TABLE campanias

@@ -16,6 +16,7 @@ use App\Core\Controller;
 use App\Middlewares\AuthMiddleware;
 use App\Repositories\UserRepository;
 use App\Services\AuthService;
+use App\Services\GamificationService;
 use App\Services\ProfileService;
 
 class PanelController extends Controller
@@ -23,12 +24,14 @@ class PanelController extends Controller
     private UserRepository $users;
     private ProfileService $profiles;
     private AuthService $auth;
+    private GamificationService $gamification;
 
     public function __construct()
     {
         $this->users = new UserRepository();
         $this->profiles = new ProfileService($this->users);
         $this->auth = new AuthService($this->users);
+        $this->gamification = new GamificationService();
     }
 
     /** GET /panel */
@@ -150,9 +153,11 @@ class PanelController extends Controller
      */
     private function renderPanel(array $extra = []): void
     {
+        $userId = (int) current_user()['id'];
         $this->render('pages/panel/index', array_merge([
             'pageTitle'      => 'Mi panel',
             'user'           => current_user(),
+            'gamification'   => $this->gamification->panelSummary($userId),
             'profileErrors'  => [],
             'passwordErrors' => [],
             'deleteErrors'   => [],

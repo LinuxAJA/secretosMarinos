@@ -37,6 +37,8 @@ $usuario = current_user();
             <a class="nav__link" href="<?= url('/ecosistemas') ?>">Ecosistemas</a>
             <a class="nav__link" href="<?= url('/campanias') ?>">Campañas</a>
             <a class="nav__link" href="<?= url('/reportes') ?>">Reportes</a>
+            <a class="nav__link" href="<?= url('/insignias') ?>">Insignias</a>
+            <a class="nav__link" href="<?= url('/ranking') ?>">Ranking</a>
 
             <?php if ($usuario): ?>
                 <?php if (has_any_role(ROLE_ADMIN, ROLE_DOCENTE)): ?>

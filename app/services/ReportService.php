@@ -33,10 +33,12 @@ class ReportService
 
     public function __construct(
         private ?ReportRepository $reports = null,
-        private ?ImageUploadService $images = null
+        private ?ImageUploadService $images = null,
+        private ?GamificationService $gamification = null
     ) {
         $this->reports ??= new ReportRepository();
         $this->images ??= new ImageUploadService();
+        $this->gamification ??= new GamificationService();
     }
 
     /**
@@ -65,13 +67,23 @@ class ReportService
         $data['imagen'] = $upload['path'];
 
         try {
-            return ['ok' => true, 'id' => $this->reports->create($data)];
+            $id = $this->reports->create($data);
         } catch (Throwable $e) {
             if ($upload['uploaded'] ?? false) {
                 $this->images->delete($upload['path']);
             }
             throw $e;
         }
+
+        // Gamificación: +10 pts (idempotente por reporte)
+        $reward = $this->gamification->onReportCreated($userId, $id);
+
+        return [
+            'ok' => true,
+            'id' => $id,
+            'newBadges' => $reward['newBadges'] ?? [],
+            'pointsAwarded' => (bool) ($reward['awarded'] ?? false),
+        ];
     }
 
     /**
@@ -169,7 +181,15 @@ class ReportService
             'revisor_id' => $reviewerId,
         ]);
 
-        return ['ok' => true];
+        $newBadges = [];
+        // Bono al autor solo al pasar a resuelto (una vez por reporte)
+        if ($estado === 'resuelto') {
+            $authorId = (int) ($existing['usuario_id'] ?? 0);
+            $reward = $this->gamification->onReportResolved($authorId, $id);
+            $newBadges = $reward['newBadges'] ?? [];
+        }
+
+        return ['ok' => true, 'newBadges' => $newBadges];
     }
 
     /**

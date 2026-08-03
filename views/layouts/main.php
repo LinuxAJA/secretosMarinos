@@ -17,7 +17,7 @@ $flash = get_flash();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Secretos Marinos — alfabetización oceánica, biodiversidad y acción ambiental.">
+    <meta name="description" content="Misterios Del Mar — alfabetización oceánica, biodiversidad y acción ambiental.">
     <title><?= e($pageTitle) ?> | <?= e(APP_NAME) ?></title>
 
     <!-- Tipografías: Fraunces (títulos expresivos) + Source Sans 3 (cuerpo legible) -->

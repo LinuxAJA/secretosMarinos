@@ -10,13 +10,13 @@ http_response_code(404);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 | Secretos Marinos</title>
+    <title>404 | Misterios Del Mar</title>
     <link rel="stylesheet" href="<?= asset('css/main.css') ?>">
 </head>
 <body class="error-page">
     <main class="container error-page__box">
         <h1>404</h1>
-        <p>No encontramos esa página en Secretos Marinos.</p>
+        <p>No encontramos esa página en Misterios Del Mar.</p>
         <a class="btn btn--primary" href="<?= url('/') ?>">Volver al inicio</a>
     </main>
 </body>
