@@ -1,0 +1,12 @@
+/**
+ * ============================================================================
+ * home.css — Ajustes específicos de la portada
+ * ============================================================================
+ * Depende de: variables, base, hero, cards, buttons
+ * ============================================================================
+ */
+
+/* El footer en home mantiene margen natural tras la banda CTA */
+.page-home .site-footer {
+  margin-top: 0;
+}

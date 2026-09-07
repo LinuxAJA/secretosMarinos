@@ -55,32 +55,57 @@ function initCampaignCancelReason() {
 }
 
 /**
- * Menú hamburguesa + Escape
+ * Menú hamburguesa + Escape + cierre del desplegable «Más»
  */
 function initMobileNav() {
   const toggle = document.querySelector('[data-nav-toggle]');
   const nav = document.querySelector('[data-nav]');
+  const moreMenus = document.querySelectorAll('.nav-more');
 
   if (!toggle || !nav) {
     return;
   }
 
-  /**
-   * Abre/cierra el menú y actualiza aria-expanded
-   * para lectores de pantalla.
-   */
+  const closeNav = () => {
+    nav.classList.remove('is-open');
+    toggle.setAttribute('aria-expanded', 'false');
+  };
+
+  const closeMoreMenus = () => {
+    moreMenus.forEach((el) => {
+      el.removeAttribute('open');
+    });
+  };
+
   toggle.addEventListener('click', () => {
     const isOpen = nav.classList.toggle('is-open');
     toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    if (isOpen) {
+      closeMoreMenus();
+    }
   });
 
-  // Cierra el menú al pulsar Escape
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && nav.classList.contains('is-open')) {
-      nav.classList.remove('is-open');
-      toggle.setAttribute('aria-expanded', 'false');
-      toggle.focus();
+    if (event.key !== 'Escape') {
+      return;
     }
+
+    if (nav.classList.contains('is-open')) {
+      closeNav();
+      toggle.focus();
+      return;
+    }
+
+    closeMoreMenus();
+  });
+
+  // Cierra «Más» al clic fuera (desktop)
+  document.addEventListener('click', (event) => {
+    moreMenus.forEach((el) => {
+      if (el.hasAttribute('open') && !el.contains(event.target)) {
+        el.removeAttribute('open');
+      }
+    });
   });
 }
 

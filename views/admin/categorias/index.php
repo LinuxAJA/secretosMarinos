@@ -20,7 +20,7 @@
                     <th>Slug</th>
                     <th>Contenidos</th>
                     <?php if (can_manage_categories()): ?>
-                        <th></th>
+                        <th>Acciones</th>
                     <?php endif; ?>
                 </tr>
             </thead>

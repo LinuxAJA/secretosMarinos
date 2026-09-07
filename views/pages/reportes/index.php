@@ -1,24 +1,23 @@
 <?php
 /**
- * Reportes ambientales: resueltos públicos + mis reportes (si hay sesión).
+ * Reportes: CTAs → mis reportes (seguimiento) → casos resueltos (impacto).
  */
 $filters ??= ['q' => '', 'tipo' => ''];
 $pagination ??= ['page' => 1, 'pages' => 1, 'total' => 0];
 $myReports ??= [];
-?>
-<section class="section" aria-labelledby="reports-title">
-    <div class="container">
-        <p class="panel-kicker"><?= e(APP_NAME) ?></p>
-        <h1 id="reports-title" class="section__title">Reportes ambientales</h1>
-        <p class="section__lead">
-            Canal de participación ciudadana para evidenciar problemas y darles seguimiento.
-        </p>
 
-        <div class="panel-actions" style="margin-bottom: var(--space-4)">
+$bandTitle = 'Reportes ambientales';
+$bandLead = 'Canal de participación ciudadana para evidenciar problemas y darles seguimiento.';
+$bandImage = asset('img/module-accion.jpg');
+require VIEWS_PATH . '/partials/page-band.php';
+?>
+<section class="section section--mist section--flush-top" aria-label="Reportes ambientales">
+    <div class="container">
+        <div class="panel-actions" style="margin-bottom: var(--space-5)">
             <?php if (is_logged_in()): ?>
-                <a class="btn btn--primary" href="<?= url('/reportes/crear') ?>">Crear reporte</a>
+                <a class="btn btn--sol" href="<?= url('/reportes/crear') ?>">Crear reporte</a>
             <?php else: ?>
-                <a class="btn btn--primary" href="<?= url('/login') ?>">Inicia sesión para reportar</a>
+                <a class="btn btn--sol" href="<?= url('/login') ?>">Inicia sesión para reportar</a>
             <?php endif; ?>
             <?php if (can_review_reports()): ?>
                 <a class="btn btn--secondary" href="<?= url('/admin/reportes') ?>">Cola de revisión</a>
@@ -26,30 +25,44 @@ $myReports ??= [];
         </div>
 
         <?php if ($myReports): ?>
-            <section class="related-section" aria-labelledby="my-reports-title">
-                <h2 id="my-reports-title">Mis reportes</h2>
+            <section class="related-section reports-mine" aria-labelledby="my-reports-title">
+                <p class="panel-kicker">Tu seguimiento</p>
+                <h2 id="my-reports-title" class="section__title" style="font-size:1.5rem;margin-bottom:1rem">
+                    Mis reportes
+                </h2>
                 <div class="content-list">
-                    <?php foreach ($myReports as $mine): ?>
+                    <?php foreach ($myReports as $i => $mine): ?>
                         <article class="content-row">
-                            <div>
+                            <div class="content-row__rail" aria-hidden="true">
+                                <span class="content-row__index"><?= str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT) ?></span>
+                            </div>
+                            <div class="content-row__main">
                                 <p class="content-row__meta">
-                                    <span class="badge"><?= e($states[$mine['estado']] ?? $mine['estado']) ?></span>
-                                    · <?= e($types[$mine['tipo']] ?? $mine['tipo']) ?>
+                                    <span class="content-row__chip"><?= e($states[$mine['estado']] ?? $mine['estado']) ?></span>
+                                    <span><?= e($types[$mine['tipo']] ?? $mine['tipo']) ?></span>
                                 </p>
                                 <h3 class="content-row__title">
                                     <a href="<?= url('/reportes/' . $mine['id']) ?>"><?= e($mine['titulo']) ?></a>
                                 </h3>
                             </div>
-                            <a href="<?= url('/reportes/' . $mine['id']) ?>">Ver</a>
+                            <a class="content-row__cta" href="<?= url('/reportes/' . $mine['id']) ?>">Ver</a>
                         </article>
                     <?php endforeach; ?>
                 </div>
             </section>
         <?php endif; ?>
 
-        <h2 class="section__title" style="font-size:1.5rem;margin-top:var(--space-5)">Casos resueltos</h2>
+        <header class="reports-resolved__head<?= $myReports ? ' reports-resolved__head--after-mine' : '' ?>">
+            <div>
+                <p class="panel-kicker">Impacto ciudadano</p>
+                <h2 class="section__title" style="margin-bottom:0.35rem">Casos resueltos</h2>
+                <p class="section__lead" style="margin-bottom:0">
+                    Hallazgos atendidos por la comunidad formativa.
+                </p>
+            </div>
+        </header>
 
-        <form class="filter-bar filter-bar--species" method="get" action="<?= url('/reportes') ?>">
+        <form class="filter-bar" method="get" action="<?= url('/reportes') ?>">
             <div class="form-field">
                 <label for="q">Buscar</label>
                 <input type="search" id="q" name="q" value="<?= e($filters['q']) ?>"
@@ -72,20 +85,29 @@ $myReports ??= [];
         <?php if (!$items): ?>
             <p class="empty-state">Aún no hay reportes resueltos publicados.</p>
         <?php else: ?>
-            <div class="catalog-grid">
-                <?php foreach ($items as $item): ?>
-                    <article class="catalog-card catalog-card--compact">
-                        <div class="catalog-card__body">
-                            <p class="content-row__meta"><?= e($types[$item['tipo']] ?? $item['tipo']) ?></p>
-                            <h3 class="catalog-card__title">
-                                <a href="<?= url('/reportes/' . $item['id']) ?>"><?= e($item['titulo']) ?></a>
-                            </h3>
+            <div class="featured-list featured-list--reports" aria-label="Reportes resueltos">
+                <?php foreach ($items as $i => $item): ?>
+                    <a
+                        class="featured-item <?= $i === 0 ? 'featured-item--lead' : '' ?>"
+                        href="<?= url('/reportes/' . $item['id']) ?>"
+                    >
+                        <span
+                            class="featured-item__media"
+                            style="--feat-image: url('<?= e(!empty($item['imagen']) ? upload_url($item['imagen']) : asset('img/module-accion.jpg')) ?>')"
+                            aria-hidden="true"
+                        ></span>
+                        <span class="featured-item__body">
+                            <span class="badge badge--ok">Resuelto</span>
+                            <span class="featured-item__type">
+                                <?= e($types[$item['tipo']] ?? $item['tipo']) ?>
+                            </span>
+                            <strong><?= e($item['titulo']) ?></strong>
                             <?php if (!empty($item['ubicacion'])): ?>
-                                <p class="muted"><?= e($item['ubicacion']) ?></p>
+                                <span class="featured-item__place"><?= e($item['ubicacion']) ?></span>
                             <?php endif; ?>
-                            <p><?= e(excerpt($item['descripcion'], 120)) ?></p>
-                        </div>
-                    </article>
+                            <span class="featured-item__excerpt"><?= e(excerpt($item['descripcion'], 110)) ?></span>
+                        </span>
+                    </a>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>

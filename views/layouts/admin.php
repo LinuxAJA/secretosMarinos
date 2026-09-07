@@ -3,6 +3,8 @@
  * ============================================================================
  * views/layouts/admin.php — Layout del panel de administración
  * ============================================================================
+ * Shell sobrio con la misma paleta bioluminiscente (Paso 8 · Fase 4).
+ * ============================================================================
  */
 $pageTitle = $pageTitle ?? 'Admin';
 $flash = get_flash();
@@ -15,8 +17,17 @@ $flash = get_flash();
     <title><?= e($pageTitle) ?> | Admin · <?= e(APP_NAME) ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?= asset('css/main.css') ?>">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= asset('css/variables.css') ?>">
+    <link rel="stylesheet" href="<?= asset('css/base.css') ?>">
+    <link rel="stylesheet" href="<?= asset('css/components/buttons.css') ?>">
+    <link rel="stylesheet" href="<?= asset('css/components/forms.css') ?>">
+    <link rel="stylesheet" href="<?= asset('css/admin.css') ?>">
+    <style>
+        :root {
+            --img-placeholder: url('<?= e(asset('img/placeholder-marine.jpg')) ?>');
+        }
+    </style>
 </head>
 <body class="admin-body">
     <div class="admin-shell">

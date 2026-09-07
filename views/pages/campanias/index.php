@@ -5,15 +5,14 @@
 $filters ??= ['q' => '', 'estado' => ''];
 $pagination ??= ['page' => 1, 'pages' => 1, 'total' => 0];
 $states ??= [];
-?>
-<section class="section" aria-labelledby="campaigns-title">
-    <div class="container">
-        <p class="panel-kicker"><?= e(APP_NAME) ?></p>
-        <h1 id="campaigns-title" class="section__title">Campañas ambientales</h1>
-        <p class="section__lead">
-            Acciones colectivas de conservación y sensibilización lideradas por la comunidad formativa.
-        </p>
 
+$bandTitle = 'Campañas ambientales';
+$bandLead = 'Acciones colectivas de conservación y sensibilización lideradas por la comunidad formativa.';
+$bandImage = asset('img/module-accion.jpg');
+require VIEWS_PATH . '/partials/page-band.php';
+?>
+<section class="section section--mist section--flush-top" aria-label="Catálogo de campañas">
+    <div class="container">
         <form class="filter-bar filter-bar--species" method="get" action="<?= url('/campanias') ?>">
             <div class="form-field">
                 <label for="q">Buscar</label>

@@ -3,20 +3,25 @@
  * ============================================================================
  * views/pages/auth/register.php — Formulario de registro
  * ============================================================================
+ * Paso 8 v2: intro fotográfica + formulario elevado.
  * El autoregistro crea usuarios con rol "estudiante".
- * Admin/docente se asignan desde el panel (pasos siguientes).
  * ============================================================================
  */
 $errors = $errors ?? [];
 ?>
 <section class="auth-section" aria-labelledby="register-title">
     <div class="container auth-section__grid">
-        <div class="auth-intro">
-            <p class="auth-intro__brand"><?= e(APP_NAME) ?></p>
-            <h1 id="register-title" class="auth-intro__title">Crea tu cuenta</h1>
-            <p class="auth-intro__text">
-                Únete como estudiante o ciudadanía participante y comienza a aprender y actuar por el océano.
-            </p>
+        <div
+            class="auth-intro auth-intro--photo"
+            style="--auth-image: url('<?= e(asset('img/auth-side.jpg')) ?>')"
+        >
+            <div class="auth-intro__veil">
+                <p class="auth-intro__brand"><?= e(APP_NAME) ?></p>
+                <h1 id="register-title" class="auth-intro__title">Crea tu cuenta</h1>
+                <p class="auth-intro__text">
+                    Únete como estudiante o ciudadanía participante y comienza a aprender y actuar por el océano.
+                </p>
+            </div>
         </div>
 
         <form class="auth-form" method="post" action="<?= url('/registro') ?>" novalidate data-auth-form>
@@ -96,7 +101,7 @@ $errors = $errors ?? [];
                 <?php endif; ?>
             </div>
 
-            <button type="submit" class="btn btn--primary btn--block">Crear cuenta</button>
+            <button type="submit" class="btn btn--coral btn--block">Crear cuenta</button>
 
             <p class="auth-form__footer">
                 ¿Ya tienes cuenta?

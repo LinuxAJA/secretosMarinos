@@ -1,0 +1,168 @@
+﻿/**
+ * ============================================================================
+ * sections.css — Secciones + page-band (Paso 8 · Bioluminiscencia)
+ * ============================================================================
+ * Cabeceras atmosféricas con foto; evita listados “blancos planos”.
+ * Depende de: variables.css, base.css
+ * ============================================================================
+ */
+
+/* --------------------------------------------------------------------------
+   Page band — firma visual de listados (compacta, no full-bleed hero)
+   -------------------------------------------------------------------------- */
+.page-band {
+  position: relative;
+  min-height: 280px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  margin: 0;
+  background-color: var(--abismo);
+  background-image:
+    linear-gradient(180deg, rgba(6, 26, 32, 0.45) 0%, rgba(6, 26, 32, 0.82) 100%),
+    var(--band-image, none);
+  background-size: cover;
+  background-position: center 40%;
+}
+
+.page-band__veil {
+  width: 100%;
+  padding: 3.5rem 0 2.75rem;
+}
+
+.page-band__content {
+  max-width: 40rem;
+  color: #fff;
+}
+
+.page-band .kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bio);
+  margin: 0 0 0.85rem;
+}
+
+.page-band .kicker::before {
+  content: "";
+  width: 14px;
+  height: 1px;
+  background: var(--bio);
+}
+
+.page-band__title {
+  font-size: clamp(1.85rem, 3.5vw, 2.65rem);
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 0.75rem;
+  line-height: 1.12;
+}
+
+.page-band__lead {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.78);
+  max-width: 36rem;
+}
+
+/* --------------------------------------------------------------------------
+   Secciones de contenido
+   -------------------------------------------------------------------------- */
+.section {
+  padding: 3.25rem 0 4.5rem;
+}
+
+.section--flush-top {
+  padding-top: 2rem;
+}
+
+.section--foam {
+  background: var(--superficie);
+}
+
+.section--mist {
+  background:
+    radial-gradient(ellipse 70% 50% at 10% 0%, rgba(67, 242, 209, 0.08), transparent 55%),
+    var(--superficie);
+}
+
+.section--abyss {
+  background: var(--abismo);
+  color: #fff;
+}
+
+.section__title {
+  font-size: var(--text-h2);
+  margin: 0 0 0.65rem;
+  color: var(--tinta);
+}
+
+.section__title--on-dark {
+  color: #fff;
+}
+
+.section__lead {
+  max-width: 40rem;
+  margin: 0 0 2rem;
+  color: var(--tinta-suave);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.section__lead--on-dark {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.panel-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin: 0 0 0.75rem;
+}
+
+.panel-kicker::before {
+  content: "";
+  width: 12px;
+  height: 1px;
+  background: var(--teal);
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bio);
+  margin: 0 0 1rem;
+}
+
+.kicker::before {
+  content: "";
+  width: 14px;
+  height: 1px;
+  background: var(--bio);
+}
+
+@media (max-width: 560px) {
+  .page-band {
+    min-height: 220px;
+  }
+
+  .page-band__veil {
+    padding: 2.5rem 0 2rem;
+  }
+}

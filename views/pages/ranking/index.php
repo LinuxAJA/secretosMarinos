@@ -1,12 +1,11 @@
-<?php /** Ranking público Top 10 por puntos ecológicos. */ ?>
-<section class="section" aria-labelledby="ranking-title">
+<?php /** Ranking público Top 10 por puntos ecológicos. */
+$bandTitle = 'Ranking ecológico';
+$bandLead = 'Los participantes con más puntos por reportes y acciones en la plataforma.';
+$bandImage = asset('img/module-accion.jpg');
+require VIEWS_PATH . '/partials/page-band.php';
+?>
+<section class="section section--mist section--flush-top" aria-label="Tabla de ranking">
     <div class="container">
-        <p class="panel-kicker"><?= e(APP_NAME) ?></p>
-        <h1 id="ranking-title" class="section__title">Ranking ecológico</h1>
-        <p class="section__lead">
-            Los participantes con más puntos por reportes y acciones en la plataforma.
-        </p>
-
         <?php if (!$items): ?>
             <p class="empty-state">Aún no hay puntuaciones registradas.</p>
         <?php else: ?>
@@ -36,7 +35,7 @@
 
         <p class="panel-actions" style="margin-top: var(--space-4)">
             <a class="btn btn--secondary" href="<?= url('/insignias') ?>">Ver insignias</a>
-            <a class="btn btn--primary" href="<?= url('/reportes/crear') ?>">Reportar y sumar puntos</a>
+            <a class="btn btn--sol" href="<?= url('/reportes/crear') ?>">Reportar y sumar puntos</a>
         </p>
     </div>
 </section>

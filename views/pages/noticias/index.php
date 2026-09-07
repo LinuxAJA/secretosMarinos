@@ -1,26 +1,36 @@
 <?php
 /**
- * Listado público de noticias.
+ * Listado público de noticias — spotlight tipográfico + filas.
  */
 $filters = $filters ?? ['categoria' => '', 'q' => ''];
 $pagination = $pagination ?? ['page' => 1, 'pages' => 1, 'total' => 0];
 $featured = $featured ?? [];
-?>
-<section class="section" aria-labelledby="news-title">
-    <div class="container">
-        <p class="panel-kicker"><?= e(APP_NAME) ?></p>
-        <h1 id="news-title" class="section__title">Noticias ambientales</h1>
-        <p class="section__lead">
-            Novedades, campañas, descubrimientos y normativa relacionada con el océano.
-        </p>
 
+$bandTitle = 'Noticias ambientales';
+$bandLead = 'Novedades, campañas, descubrimientos y normativa relacionada con el océano.';
+$bandImage = asset('img/module-noticias.jpg');
+$bandKicker = APP_NAME;
+require VIEWS_PATH . '/partials/page-band.php';
+?>
+<section class="section section--mist section--flush-top" aria-label="Listado de noticias">
+    <div class="container">
         <?php if ($featured && empty($filters['q']) && empty($filters['categoria'])): ?>
-            <div class="featured-list" aria-label="Destacadas">
-                <?php foreach ($featured as $feat): ?>
-                    <a class="featured-item" href="<?= url('/noticias/' . $feat['slug']) ?>">
-                        <span class="badge">Destacada</span>
-                        <strong><?= e($feat['titulo']) ?></strong>
-                        <span><?= e($feat['resumen'] ?: excerpt($feat['cuerpo'], 100)) ?></span>
+            <div class="spotlight-list" aria-label="Destacadas">
+                <?php foreach ($featured as $i => $feat): ?>
+                    <a
+                        class="spotlight-card <?= $i === 0 ? 'spotlight-card--lead' : '' ?>"
+                        href="<?= url('/noticias/' . $feat['slug']) ?>"
+                    >
+                        <span class="spotlight-card__badge">Destacada</span>
+                        <span class="spotlight-card__tag"><?= e($feat['categoria'] ?? 'General') ?></span>
+                        <strong class="spotlight-card__title"><?= e($feat['titulo']) ?></strong>
+                        <span class="spotlight-card__meta">
+                            <?= e(format_date($feat['publicado_en'] ?? $feat['creado_en'] ?? null)) ?>
+                        </span>
+                        <span class="spotlight-card__excerpt">
+                            <?= e($feat['resumen'] ?: excerpt($feat['cuerpo'], 120)) ?>
+                        </span>
+                        <span class="spotlight-card__go">Leer noticia →</span>
                     </a>
                 <?php endforeach; ?>
             </div>
@@ -49,19 +59,22 @@ $featured = $featured ?? [];
             <p class="empty-state">No hay noticias publicadas con esos filtros.</p>
         <?php else: ?>
             <div class="content-list">
-                <?php foreach ($items as $item): ?>
+                <?php foreach ($items as $i => $item): ?>
                     <article class="content-row">
-                        <div>
+                        <div class="content-row__rail" aria-hidden="true">
+                            <span class="content-row__index"><?= str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT) ?></span>
+                        </div>
+                        <div class="content-row__main">
                             <p class="content-row__meta">
-                                <?= e($item['categoria'] ?? 'General') ?>
-                                · <?= e(format_date($item['publicado_en'] ?? $item['creado_en'])) ?>
+                                <span class="content-row__chip"><?= e($item['categoria'] ?? 'General') ?></span>
+                                <span><?= e(format_date($item['publicado_en'] ?? $item['creado_en'])) ?></span>
                             </p>
                             <h2 class="content-row__title">
                                 <a href="<?= url('/noticias/' . $item['slug']) ?>"><?= e($item['titulo']) ?></a>
                             </h2>
                             <p class="content-row__excerpt"><?= e($item['resumen'] ?: excerpt($item['cuerpo'])) ?></p>
                         </div>
-                        <a class="btn btn--secondary" href="<?= url('/noticias/' . $item['slug']) ?>">Leer</a>
+                        <a class="content-row__cta" href="<?= url('/noticias/' . $item['slug']) ?>">Leer</a>
                     </article>
                 <?php endforeach; ?>
             </div>

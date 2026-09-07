@@ -2,15 +2,14 @@
 /** Catálogo público de especies. */
 $filters ??= ['q' => '', 'ecosistema' => 0, 'conservacion' => ''];
 $pagination ??= ['page' => 1, 'pages' => 1, 'total' => 0];
-?>
-<section class="section" aria-labelledby="species-title">
-    <div class="container">
-        <p class="panel-kicker"><?= e(APP_NAME) ?></p>
-        <h1 id="species-title" class="section__title">Especies marinas</h1>
-        <p class="section__lead">
-            Consulta fichas científicas sobre biodiversidad, hábitat, distribución y conservación.
-        </p>
 
+$bandTitle = 'Especies marinas';
+$bandLead = 'Consulta fichas científicas sobre biodiversidad, hábitat, distribución y conservación.';
+$bandImage = asset('img/module-catalogo.jpg');
+require VIEWS_PATH . '/partials/page-band.php';
+?>
+<section class="section section--mist section--flush-top" aria-label="Catálogo de especies">
+    <div class="container">
         <form class="filter-bar filter-bar--species" method="get" action="<?= url('/especies') ?>">
             <div class="form-field">
                 <label for="q">Buscar</label>

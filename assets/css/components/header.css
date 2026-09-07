@@ -1,0 +1,392 @@
+/**
+ * ============================================================================
+ * header.css — Navegación fija + estado glass al scroll
+ * ============================================================================
+ * Depende de: variables.css, base.css
+ * JS: assets/js/header-scroll.js (toggle .scrolled)
+ *
+ * Anti-sobrepoblación:
+ *   - Acciones de cuenta fuera del nav (no hacen wrap bajo los links)
+ *   - Nav primaria compacta + details «Más» (Reportes / Insignias / Ranking)
+ *   - Hamburguesa desde ~1100px (antes de que quepa mal en una sola fila)
+ * ============================================================================
+ */
+
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  height: auto;
+  min-height: var(--header-h);
+  display: flex;
+  align-items: center;
+  padding: 1.15rem 0;
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition:
+    background 0.3s var(--ease),
+    padding 0.3s var(--ease),
+    border-color 0.3s var(--ease),
+    backdrop-filter 0.3s var(--ease);
+}
+
+/* --------------------------------------------------------------------------
+   Estado glass (.scrolled) — también estado por defecto sin hero
+   -------------------------------------------------------------------------- */
+.site-header.scrolled {
+  padding: 0.7rem 0;
+  background: rgba(238, 247, 246, 0.82);
+  backdrop-filter: blur(14px);
+  border-bottom-color: var(--linea);
+}
+
+.site-header__inner {
+  position: relative;
+  width: min(100% - 2.5rem, var(--max-width));
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  flex-wrap: nowrap;
+}
+
+/* --- Marca --- */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-decoration: none;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #fff;
+  flex-shrink: 0;
+  transition: color 0.3s var(--ease);
+}
+
+.site-header.scrolled .brand {
+  color: var(--tinta);
+}
+
+.brand__mark {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background:
+    radial-gradient(circle at 32% 28%, #bdfcef 0%, var(--bio) 38%, var(--teal) 78%);
+  box-shadow: 0 0 14px var(--bio-dim);
+}
+
+.brand__text {
+  font-family: var(--font-display);
+  white-space: nowrap;
+}
+
+/* --- Nav primaria --- */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem 0.95rem;
+  flex-wrap: nowrap;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.nav__link {
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  font-size: 0.86rem;
+  font-weight: 500;
+  position: relative;
+  padding: 0.25rem 0;
+  border-bottom: none;
+  white-space: nowrap;
+  transition: color 0.3s var(--ease);
+}
+
+.site-header.scrolled .nav__link {
+  color: var(--tinta-suave);
+}
+
+.nav__link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 1.5px;
+  background: var(--sol);
+  transition: width 0.25s var(--ease);
+}
+
+.nav__link:hover {
+  color: #fff;
+}
+
+.site-header.scrolled .nav__link:hover {
+  color: var(--tinta);
+}
+
+.nav__link:hover::after {
+  width: 100%;
+}
+
+/* CTA de cuenta / ingresar */
+.nav__link--accent {
+  background: #fff;
+  color: var(--tinta) !important;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  border: none;
+  flex-shrink: 0;
+}
+
+.site-header.scrolled .nav__link--accent {
+  background: var(--tinta);
+  color: #fff !important;
+}
+
+.nav__link--accent::after {
+  display: none;
+}
+
+.nav__logout {
+  display: inline;
+  margin: 0;
+}
+
+.nav__link--logout {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 500;
+  font-size: 0.86rem;
+  padding: 0.25rem 0;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+}
+
+.site-header.scrolled .nav__link--logout {
+  color: var(--tinta-suave);
+}
+
+.nav__link--logout:hover {
+  color: #fecaca;
+}
+
+.site-header.scrolled .nav__link--logout:hover {
+  color: #dc2626;
+}
+
+/* Auth duplicado: solo visible dentro del panel móvil */
+.nav__auth-mobile {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Menú «Más» (details) — secundarios sin saturar la barra
+   -------------------------------------------------------------------------- */
+.nav-more {
+  position: relative;
+}
+
+.nav-more__summary {
+  list-style: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.86rem;
+  font-weight: 500;
+  padding: 0.25rem 0;
+  white-space: nowrap;
+  user-select: none;
+  transition: color 0.3s var(--ease);
+}
+
+.nav-more__summary::-webkit-details-marker {
+  display: none;
+}
+
+.nav-more__summary::after {
+  content: " ▾";
+  font-size: 0.7em;
+  opacity: 0.75;
+}
+
+.site-header.scrolled .nav-more__summary {
+  color: var(--tinta-suave);
+}
+
+.nav-more__summary:hover,
+.nav-more[open] .nav-more__summary {
+  color: #fff;
+}
+
+.site-header.scrolled .nav-more__summary:hover,
+.site-header.scrolled .nav-more[open] .nav-more__summary {
+  color: var(--tinta);
+}
+
+.nav-more__panel {
+  position: absolute;
+  top: calc(100% + 0.65rem);
+  right: 0;
+  min-width: 11rem;
+  padding: 0.45rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  background: rgba(238, 247, 246, 0.97);
+  border: 1px solid var(--linea);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  z-index: 60;
+}
+
+.nav-more__panel .nav__link {
+  color: var(--tinta-suave) !important;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+}
+
+.nav-more__panel .nav__link::after {
+  display: none;
+}
+
+.nav-more__panel .nav__link:hover {
+  color: var(--tinta) !important;
+  background: rgba(6, 34, 44, 0.06);
+}
+
+/* --------------------------------------------------------------------------
+   Acciones de cuenta (derecha) — nunca bajan de fila en desktop
+   -------------------------------------------------------------------------- */
+.header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.nav-toggle {
+  display: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 0.4rem;
+  flex-shrink: 0;
+}
+
+.nav-toggle span:not(.visually-hidden) {
+  display: block;
+  height: 2px;
+  margin: 5px 0;
+  background: currentColor;
+  border-radius: 2px;
+  color: #fff;
+}
+
+.site-header.scrolled .nav-toggle span:not(.visually-hidden) {
+  background: var(--tinta);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive: colapsa antes de que la fila se rompa (~1100px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .nav-toggle {
+    display: inline-block;
+    color: #fff;
+  }
+
+  .site-header.scrolled .nav-toggle {
+    color: var(--tinta);
+  }
+
+  /* En viewport estrecho, Ingresar vive en el panel; la barra queda limpia */
+  .header-actions .nav__link,
+  .header-actions .nav__logout {
+    display: none;
+  }
+
+  .nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: var(--space-3);
+    background: rgba(238, 247, 246, 0.97);
+    border-bottom: 1px solid var(--linea);
+    box-shadow: var(--shadow-soft);
+    flex: none;
+    min-width: 0;
+  }
+
+  .nav.is-open {
+    display: flex;
+  }
+
+  .nav__link {
+    color: var(--tinta-suave) !important;
+    padding: 0.75rem 0.5rem;
+    border-bottom: 1px solid var(--linea);
+  }
+
+  .nav__link--accent {
+    text-align: center;
+    margin-top: 0.5rem;
+    background: var(--tinta) !important;
+    color: #fff !important;
+  }
+
+  .nav__link--logout {
+    width: 100%;
+    text-align: left;
+    color: var(--tinta-suave) !important;
+  }
+
+  .nav-more {
+    border-bottom: 1px solid var(--linea);
+  }
+
+  .nav-more__summary {
+    color: var(--tinta-suave) !important;
+    padding: 0.75rem 0.5rem;
+    width: 100%;
+  }
+
+  .nav-more__panel {
+    position: static;
+    min-width: 0;
+    margin: 0 0 0.35rem;
+    padding: 0 0 0.35rem 0.75rem;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+    border-radius: 0;
+  }
+
+  .nav-more__panel .nav__link {
+    border-bottom: 1px solid var(--linea);
+    border-radius: 0;
+  }
+
+  .nav__auth-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 0.35rem;
+    padding-top: 0.35rem;
+  }
+}

@@ -19,7 +19,7 @@
                     <th>Responsable</th>
                     <th>Estado</th>
                     <th>Fechas</th>
-                    <th></th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>

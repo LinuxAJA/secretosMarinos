@@ -19,7 +19,7 @@
                     <th>Código</th>
                     <th>Umbral</th>
                     <th>Estado</th>
-                    <?php if (can_manage_badges()): ?><th></th><?php endif; ?>
+                    <?php if (can_manage_badges()): ?><th>Acciones</th><?php endif; ?>
                 </tr>
             </thead>
             <tbody>

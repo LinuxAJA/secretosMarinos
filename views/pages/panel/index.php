@@ -27,15 +27,15 @@ $rolLabel = [
 
 $nombreValue = (string) old('nombre', $user['nombre'] ?? '');
 $correoValue = (string) old('correo', $user['correo'] ?? '');
-?>
-<section class="section panel-section" aria-labelledby="panel-title">
-    <div class="container">
-        <p class="panel-kicker"><?= e(APP_NAME) ?></p>
-        <h1 id="panel-title" class="section__title">Hola, <?= e($user['nombre'] ?? '') ?></h1>
-        <p class="section__lead">
-            Gestiona tu cuenta, revisa tu rol y accede a las acciones de la plataforma.
-        </p>
 
+$bandTitle = 'Hola, ' . ($user['nombre'] ?? '');
+$bandLead = 'Gestiona tu cuenta, revisa tu rol y accede a las acciones de la plataforma.';
+$bandImage = asset('img/auth-side.jpg');
+$bandKicker = 'Mi panel';
+require VIEWS_PATH . '/partials/page-band.php';
+?>
+<section class="section section--mist section--flush-top panel-section" aria-label="Panel personal">
+    <div class="container">
         <div class="panel-grid">
             <article class="panel-stat">
                 <h2 class="panel-stat__label">Rol</h2>

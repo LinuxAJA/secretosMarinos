@@ -1,37 +1,80 @@
 <?php
 /**
- * Sidebar de administración (admin / docente).
+ * ============================================================================
+ * Sidebar de administración — layout sticky + nav agrupada
+ * ============================================================================
+ * - Cabecera y logout fijos en viewport
+ * - Solo el listado hace scroll interno (logout siempre visible)
+ * ============================================================================
  */
 $user = current_user();
+$reqPath = rtrim((string) (parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: ''), '/') ?: '/';
+
+$adminActive = static function (string $route) use ($reqPath): bool {
+    $target = rtrim((string) (parse_url(url($route), PHP_URL_PATH) ?: ''), '/') ?: '/';
+    if ($route === '/admin') {
+        return $reqPath === $target;
+    }
+    return $reqPath === $target || str_starts_with($reqPath, $target . '/');
+};
+
+$rolLabel = [
+    'admin'   => 'Administrador',
+    'docente' => 'Docente',
+][$user['rol'] ?? ''] ?? ($user['rol'] ?? 'Usuario');
+
+$link = static function (string $route, string $label) use ($adminActive): void {
+    $active = $adminActive($route) ? ' is-active' : '';
+    echo '<a class="admin-sidebar__link' . $active . '" href="' . e(url($route)) . '">' . e($label) . '</a>';
+};
 ?>
 <aside class="admin-sidebar" aria-label="Menú de administración">
-    <a class="admin-sidebar__brand" href="<?= url('/admin') ?>"><?= e(APP_NAME) ?></a>
-    <p class="admin-sidebar__user"><?= e($user['nombre'] ?? '') ?> · <?= e($user['rol'] ?? '') ?></p>
+    <div class="admin-sidebar__head">
+        <a class="admin-sidebar__brand" href="<?= url('/admin') ?>">
+            <span class="admin-sidebar__mark" aria-hidden="true"></span>
+            <span class="admin-sidebar__brand-text"><?= e(APP_NAME) ?></span>
+        </a>
+        <div class="admin-sidebar__identity">
+            <p class="admin-sidebar__name"><?= e($user['nombre'] ?? '') ?></p>
+            <p class="admin-sidebar__role"><?= e($rolLabel) ?></p>
+        </div>
+    </div>
 
-    <nav class="admin-sidebar__nav">
-        <a href="<?= url('/admin') ?>">Dashboard</a>
+    <nav class="admin-sidebar__nav" aria-label="Secciones admin">
+        <p class="admin-sidebar__group">Resumen</p>
+        <?php $link('/admin', 'Dashboard'); ?>
         <?php if (can_view_stats()): ?>
-            <a href="<?= url('/admin/estadisticas') ?>">Estadísticas</a>
+            <?php $link('/admin/estadisticas', 'Estadísticas'); ?>
         <?php endif; ?>
-        <a href="<?= url('/admin/contenidos') ?>">Contenidos</a>
-        <a href="<?= url('/admin/categorias') ?>">Categorías</a>
-        <a href="<?= url('/admin/noticias') ?>">Noticias</a>
-        <a href="<?= url('/admin/ecosistemas') ?>">Ecosistemas</a>
-        <a href="<?= url('/admin/especies') ?>">Especies</a>
-        <a href="<?= url('/admin/campanias') ?>">Campañas</a>
-        <a href="<?= url('/admin/reportes') ?>">Reportes</a>
-        <a href="<?= url('/admin/insignias') ?>">Insignias</a>
+
+        <p class="admin-sidebar__group">Biblioteca</p>
+        <?php $link('/admin/contenidos', 'Contenidos'); ?>
+        <?php $link('/admin/categorias', 'Categorías'); ?>
+        <?php $link('/admin/noticias', 'Noticias'); ?>
+
+        <p class="admin-sidebar__group">Catálogo</p>
+        <?php $link('/admin/ecosistemas', 'Ecosistemas'); ?>
+        <?php $link('/admin/especies', 'Especies'); ?>
+
+        <p class="admin-sidebar__group">Acción</p>
+        <?php $link('/admin/campanias', 'Campañas'); ?>
+        <?php $link('/admin/reportes', 'Reportes'); ?>
+        <?php $link('/admin/insignias', 'Insignias'); ?>
         <?php if (can_adjust_points()): ?>
-            <a href="<?= url('/admin/puntos') ?>">Puntos</a>
+            <?php $link('/admin/puntos', 'Puntos'); ?>
         <?php endif; ?>
+
         <?php if (can_manage_users()): ?>
-            <a href="<?= url('/admin/usuarios') ?>">Usuarios</a>
+            <p class="admin-sidebar__group">Sistema</p>
+            <?php $link('/admin/usuarios', 'Usuarios'); ?>
         <?php endif; ?>
-        <a href="<?= url('/panel') ?>">Mi panel</a>
+
+        <p class="admin-sidebar__group">Cuenta</p>
+        <?php $link('/panel', 'Mi panel'); ?>
     </nav>
 
     <form method="post" action="<?= url('/logout') ?>" class="admin-sidebar__logout">
         <?= csrf_field() ?>
-        <button type="submit" class="btn btn--secondary btn--block">Cerrar sesión</button>
+        <button type="submit" class="admin-sidebar__logout-btn">Cerrar sesión</button>
     </form>
 </aside>

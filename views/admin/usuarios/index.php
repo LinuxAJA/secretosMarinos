@@ -53,7 +53,7 @@ $roles ??= [];
                     <th>Rol</th>
                     <th>Puntos</th>
                     <th>Estado</th>
-                    <th></th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
