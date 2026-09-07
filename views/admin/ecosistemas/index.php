@@ -18,7 +18,7 @@
                     <th>Estado</th>
                     <th>Especies</th>
                     <th>Actualizado</th>
-                    <?php if (can_manage_ecosystems()): ?><th></th><?php endif; ?>
+                    <?php if (can_manage_ecosystems()): ?><th>Acciones</th><?php endif; ?>
                 </tr>
             </thead>
             <tbody>

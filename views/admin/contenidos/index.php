@@ -24,7 +24,7 @@ $nivelLabel = ['basico' => 'Básico', 'intermedio' => 'Intermedio', 'avanzado' =
                     <th>Nivel</th>
                     <th>Estado</th>
                     <th>Visitas</th>
-                    <th></th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>

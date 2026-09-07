@@ -22,6 +22,11 @@ class AuthController extends Controller
 {
     private AuthService $auth;
 
+    /** CSS modular auth (sin content.css genérico). */
+    private const AUTH_STYLES = [
+        'css/pages/auth.css',
+    ];
+
     public function __construct()
     {
         $this->auth = new AuthService();
@@ -34,8 +39,10 @@ class AuthController extends Controller
         clear_old();
 
         $this->render('pages/auth/login', [
-            'pageTitle' => 'Iniciar sesión',
-            'errors'    => [],
+            'pageTitle'  => 'Iniciar sesión',
+            'errors'     => [],
+            'pageStyles' => self::AUTH_STYLES,
+            'bodyClass'  => 'page-auth',
         ]);
     }
 
@@ -53,8 +60,10 @@ class AuthController extends Controller
         if (!$result['ok']) {
             flash_old(['correo' => $correo]);
             $this->render('pages/auth/login', [
-                'pageTitle' => 'Iniciar sesión',
-                'errors'    => $result['errors'] ?? [],
+                'pageTitle'  => 'Iniciar sesión',
+                'errors'     => $result['errors'] ?? [],
+                'pageStyles' => self::AUTH_STYLES,
+                'bodyClass'  => 'page-auth',
             ]);
             clear_old();
             return;
@@ -71,8 +80,10 @@ class AuthController extends Controller
         clear_old();
 
         $this->render('pages/auth/register', [
-            'pageTitle' => 'Crear cuenta',
-            'errors'    => [],
+            'pageTitle'  => 'Crear cuenta',
+            'errors'     => [],
+            'pageStyles' => self::AUTH_STYLES,
+            'bodyClass'  => 'page-auth',
         ]);
     }
 
@@ -97,8 +108,10 @@ class AuthController extends Controller
                 'correo' => $input['correo'],
             ]);
             $this->render('pages/auth/register', [
-                'pageTitle' => 'Crear cuenta',
-                'errors'    => $result['errors'] ?? [],
+                'pageTitle'  => 'Crear cuenta',
+                'errors'     => $result['errors'] ?? [],
+                'pageStyles' => self::AUTH_STYLES,
+                'bodyClass'  => 'page-auth',
             ]);
             clear_old();
             return;

@@ -2,15 +2,14 @@
 /** Catálogo público de ecosistemas. */
 $filters ??= ['q' => ''];
 $pagination ??= ['page' => 1, 'pages' => 1, 'total' => 0];
-?>
-<section class="section" aria-labelledby="ecosystems-title">
-    <div class="container">
-        <p class="panel-kicker"><?= e(APP_NAME) ?></p>
-        <h1 id="ecosystems-title" class="section__title">Ecosistemas marinos</h1>
-        <p class="section__lead">
-            Conoce su función ecológica, amenazas y las especies que dependen de ellos.
-        </p>
 
+$bandTitle = 'Ecosistemas marinos';
+$bandLead = 'Conoce su función ecológica, amenazas y las especies que dependen de ellos.';
+$bandImage = asset('img/module-catalogo.jpg');
+require VIEWS_PATH . '/partials/page-band.php';
+?>
+<section class="section section--mist section--flush-top" aria-label="Catálogo de ecosistemas">
+    <div class="container">
         <form class="filter-bar filter-bar--simple" method="get" action="<?= url('/ecosistemas') ?>">
             <div class="form-field">
                 <label for="q">Buscar ecosistema</label>

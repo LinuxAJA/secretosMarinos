@@ -3,21 +3,24 @@
  * ============================================================================
  * views/pages/auth/login.php — Formulario de inicio de sesión
  * ============================================================================
- * Variables: $errors (array de mensajes por campo o 'general')
- * Old input: get_old('correo')
- * CSRF: csrf_field()
+ * Paso 8 v2: intro con fotografía editorial + formulario elevado.
  * ============================================================================
  */
 $errors = $errors ?? [];
 ?>
 <section class="auth-section" aria-labelledby="login-title">
     <div class="container auth-section__grid">
-        <div class="auth-intro">
-            <p class="auth-intro__brand"><?= e(APP_NAME) ?></p>
-            <h1 id="login-title" class="auth-intro__title">Inicia sesión</h1>
-            <p class="auth-intro__text">
-                Accede para participar en campañas, reportar hallazgos y seguir tu progreso.
-            </p>
+        <div
+            class="auth-intro auth-intro--photo"
+            style="--auth-image: url('<?= e(asset('img/auth-side.jpg')) ?>')"
+        >
+            <div class="auth-intro__veil">
+                <p class="auth-intro__brand"><?= e(APP_NAME) ?></p>
+                <h1 id="login-title" class="auth-intro__title">Inicia sesión</h1>
+                <p class="auth-intro__text">
+                    Accede para participar en campañas, reportar hallazgos y seguir tu progreso.
+                </p>
+            </div>
         </div>
 
         <form class="auth-form" method="post" action="<?= url('/login') ?>" novalidate data-auth-form>
@@ -61,7 +64,7 @@ $errors = $errors ?? [];
                 <?php endif; ?>
             </div>
 
-            <button type="submit" class="btn btn--primary btn--block">Entrar</button>
+            <button type="submit" class="btn btn--coral btn--block">Entrar</button>
 
             <p class="auth-form__footer">
                 ¿Aún no tienes cuenta?

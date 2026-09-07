@@ -1,0 +1,141 @@
+/**
+ * ============================================================================
+ * hero.css — Hero fotográfico + ken burns + separador de onda
+ * ============================================================================
+ * Firma visual del Paso 8: foto real + overlay abismo + onda SVG
+ * hacia --superficie. Solo en transición hero → contenido.
+ * ============================================================================
+ */
+
+.hero-photo {
+  position: relative;
+  height: 85vh;
+  min-height: 560px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  margin: 0;
+  /* Compensa el padding-top del body con header fixed */
+  margin-top: calc(var(--header-h) * -1);
+  padding-top: var(--header-h);
+}
+
+.hero-photo__bg {
+  position: absolute;
+  inset: 0;
+  background-color: var(--abismo);
+  background-image:
+    linear-gradient(180deg, rgba(6, 26, 32, 0.55) 0%, rgba(6, 26, 32, 0.35) 40%, rgba(6, 26, 32, 0.78) 100%),
+    var(--hero-image, none);
+  background-position: center 60%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  animation: kenburns 22s ease-in-out infinite alternate;
+}
+
+@keyframes kenburns {
+  from { transform: scale(1); }
+  to   { transform: scale(1.08); }
+}
+
+.hero-photo__content {
+  position: relative;
+  z-index: 2;
+  padding: 0 0 7.5rem;
+  max-width: 42rem;
+  color: #fff;
+  animation: hero-rise 0.9s var(--ease) both;
+}
+
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bio);
+  margin: 0 0 1.15rem;
+}
+
+.kicker::before {
+  content: "";
+  width: 14px;
+  height: 1px;
+  background: var(--bio);
+}
+
+.hero-photo__title {
+  font-size: var(--text-h1);
+  font-weight: 600;
+  line-height: 1.06;
+  color: #fff;
+  margin: 0 0 1.15rem;
+}
+
+.hero-photo__title em {
+  font-style: italic;
+  color: var(--bio);
+}
+
+.hero-photo__lead {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.78);
+  max-width: 34rem;
+  margin: 0 0 2rem;
+}
+
+.hero-photo__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+/* Separador de onda (firma) — relleno superficie */
+.wave {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  z-index: 3;
+  line-height: 0;
+}
+
+.wave svg {
+  width: 100%;
+  height: 90px;
+  display: block;
+}
+
+.wave path {
+  /* Continúa en la zona de plataforma (oscura), no en espuma clara */
+  fill: var(--crepusculo);
+}
+
+@media (max-width: 560px) {
+  .hero-photo {
+    min-height: 480px;
+    height: 78vh;
+  }
+
+  .hero-photo__content {
+    padding-bottom: 5.5rem;
+  }
+
+  .wave svg {
+    height: 56px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-photo__bg {
+    animation: none;
+  }
+}

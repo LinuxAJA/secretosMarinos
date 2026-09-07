@@ -1,0 +1,444 @@
+/**
+ * ============================================================================
+ * cards.css — Variantes de tarjeta / tile (Paso 8)
+ * ============================================================================
+ * - spotlight: destacadas tipográficas (Noticias, sin foto)
+ * - featured: cards oscuras de impacto (Reportes resueltos)
+ * - depth-tick / tiles / CTA: Educación + Home
+ * ============================================================================
+ */
+
+/* --------------------------------------------------------------------------
+   Spotlight — destacadas tipográficas (Noticias)
+   -------------------------------------------------------------------------- */
+.spotlight-list {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.spotlight-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 1.45rem 1.4rem 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  background: #fff;
+  border: 1px solid var(--linea);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.28s var(--ease), box-shadow 0.28s var(--ease), border-color 0.28s var(--ease);
+}
+
+.spotlight-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lift);
+  border-color: rgba(15, 110, 104, 0.28);
+}
+
+.spotlight-card--lead {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  justify-content: flex-end;
+  min-height: 100%;
+  padding: 1.75rem 1.6rem;
+  background:
+    linear-gradient(165deg, rgba(238, 247, 246, 0.95) 0%, #fff 55%);
+  border-left: 3px solid var(--bio);
+}
+
+.spotlight-card__tag {
+  display: inline-flex;
+  width: fit-content;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+
+.spotlight-card__badge {
+  display: inline-flex;
+  width: fit-content;
+  padding: 0.22rem 0.55rem;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  background: rgba(255, 180, 84, 0.2);
+  color: #8a4b00;
+}
+
+.spotlight-card__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--tinta);
+}
+
+.spotlight-card--lead .spotlight-card__title {
+  font-size: clamp(1.4rem, 2.4vw, 1.85rem);
+}
+
+.spotlight-card__meta {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--tinta-suave);
+}
+
+.spotlight-card__excerpt {
+  margin: 0.25rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--tinta-suave);
+}
+
+.spotlight-card__go {
+  margin-top: auto;
+  padding-top: 0.85rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--teal);
+}
+
+.spotlight-card:hover .spotlight-card__go {
+  color: var(--abismo);
+}
+
+@media (max-width: 900px) {
+  .spotlight-list {
+    grid-template-columns: 1fr;
+  }
+
+  .spotlight-card--lead {
+    grid-column: auto;
+    grid-row: auto;
+  }
+}
+
+.spotlight-list:has(.spotlight-card:only-child) {
+  grid-template-columns: 1fr;
+  max-width: 36rem;
+}
+
+/* --------------------------------------------------------------------------
+   Featured — cards oscuras de impacto (Reportes resueltos)
+   -------------------------------------------------------------------------- */
+.featured-list {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.featured-list--reports {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: none;
+}
+
+.featured-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 14rem;
+  padding: 1.35rem 1.4rem;
+  text-decoration: none;
+  color: #fff;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--linea-oscura);
+  background: linear-gradient(165deg, var(--crepusculo) 0%, var(--abismo) 100%);
+  transition: transform 0.28s var(--ease), box-shadow 0.28s var(--ease);
+}
+
+.featured-list--reports .featured-item {
+  min-height: 15.5rem;
+}
+
+.featured-item--lead {
+  grid-row: span 2;
+  min-height: 26rem;
+  padding: 1.75rem 1.65rem;
+}
+
+.featured-list--reports .featured-item--lead {
+  grid-column: 1 / span 2;
+  grid-row: auto;
+  min-height: 15.5rem;
+}
+
+.featured-item__media {
+  position: absolute;
+  inset: 0;
+  background-color: var(--abismo);
+  background-image:
+    radial-gradient(ellipse 70% 55% at 70% 20%, rgba(67, 242, 209, 0.18), transparent 55%),
+    linear-gradient(180deg, rgba(6, 26, 32, 0.2) 0%, rgba(6, 26, 32, 0.92) 100%),
+    var(--feat-image, none);
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.6s var(--ease);
+  z-index: 0;
+}
+
+.featured-item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lift);
+}
+
+.featured-item:hover .featured-item__media {
+  transform: scale(1.05);
+}
+
+.featured-item__body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.featured-item__body strong {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #fff;
+}
+
+.featured-item--lead .featured-item__body strong {
+  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+}
+
+.featured-item__place {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.featured-item__type {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bio);
+}
+
+.featured-item__excerpt {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+@media (max-width: 900px) {
+  .featured-list,
+  .featured-list--reports {
+    grid-template-columns: 1fr;
+  }
+
+  .featured-item--lead,
+  .featured-list--reports .featured-item--lead {
+    grid-column: auto;
+    grid-row: auto;
+    min-height: 14rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Depth tick — niveles educativos (va dentro del rail)
+   -------------------------------------------------------------------------- */
+.depth-tick {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.depth-tick__mark {
+  width: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  box-shadow: 0 0 10px var(--bio-dim);
+  color: var(--bio);
+}
+
+.depth-tick__mark--basico {
+  height: 0.85rem;
+  color: var(--sol);
+  box-shadow: 0 0 10px rgba(255, 180, 84, 0.35);
+}
+
+.depth-tick__mark--intermedio {
+  height: 1.45rem;
+  color: var(--bio);
+}
+
+.depth-tick__mark--avanzado {
+  height: 2.1rem;
+  color: #9af7e6;
+}
+
+.depth-tick__label {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+  text-align: center;
+  max-width: 3.6rem;
+  line-height: 1.2;
+}
+
+/* --------------------------------------------------------------------------
+   Tiles de plataforma (Home · zona de luz)
+   -------------------------------------------------------------------------- */
+.platform-zone {
+  position: relative;
+  /* Zona fótica: continúa el abismo del hero (la onda rellena --crepusculo) */
+  background: linear-gradient(180deg, var(--crepusculo) 0%, var(--luz) 45%, var(--abismo) 100%);
+  padding: 5.5rem 0 4.5rem;
+}
+
+.platform-zone__head {
+  max-width: 40rem;
+  margin: 0 auto 3.5rem;
+  text-align: center;
+}
+
+.platform-zone__head .kicker {
+  color: var(--bio);
+  justify-content: center;
+}
+
+.platform-zone__head .kicker::before {
+  background: var(--bio);
+}
+
+.platform-zone__head h2 {
+  color: #fff;
+  margin: 0 0 1rem;
+}
+
+.platform-zone__lead {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 1.02rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tile {
+  background: rgba(6, 26, 32, 0.55);
+  padding: 2rem 1.5rem;
+  transition: background 0.25s var(--ease);
+}
+
+.tile:hover {
+  background: rgba(6, 26, 32, 0.85);
+}
+
+.tile__num {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: var(--bio);
+  opacity: 0.75;
+  margin: 0 0 1.25rem;
+  display: block;
+}
+
+.tile h3 {
+  font-size: 1.05rem;
+  color: #fff;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+}
+
+.tile p {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.5;
+  margin: 0 0 1rem;
+}
+
+.tile__link {
+  font-size: 0.85rem;
+  color: var(--bio);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.tile__link:hover {
+  text-decoration: underline;
+  color: var(--bio);
+}
+
+.tile__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+@media (max-width: 900px) {
+  .tiles {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .tiles {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Banda CTA crepuscular
+   -------------------------------------------------------------------------- */
+.cta-band {
+  position: relative;
+  text-align: center;
+  padding: 6rem 0;
+  overflow: hidden;
+  color: #fff;
+  background-color: var(--crepusculo);
+  background-image:
+    linear-gradient(180deg, rgba(15, 74, 82, 0.75) 0%, rgba(6, 26, 32, 0.88) 100%),
+    var(--cta-image, none);
+  background-size: cover;
+  background-position: center;
+}
+
+.cta-band h2 {
+  color: #fff;
+  margin: 0 0 1rem;
+}
+
+.cta-band p {
+  color: rgba(255, 255, 255, 0.65);
+  max-width: 32rem;
+  margin: 0 auto 2rem;
+  font-size: 1.02rem;
+  line-height: 1.6;
+}
+
+.cta-band .hero-photo__actions {
+  justify-content: center;
+}

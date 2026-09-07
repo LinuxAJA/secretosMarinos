@@ -1,15 +1,14 @@
 <?php
 /** Catálogo público de insignias. */
 $ownedIds = $ownedIds ?? [];
-?>
-<section class="section" aria-labelledby="badges-title">
-    <div class="container">
-        <p class="panel-kicker"><?= e(APP_NAME) ?></p>
-        <h1 id="badges-title" class="section__title">Insignias</h1>
-        <p class="section__lead">
-            Logros que se desbloquean al acumular puntos ecológicos con tu participación.
-        </p>
 
+$bandTitle = 'Insignias';
+$bandLead = 'Logros que se desbloquean al acumular puntos ecológicos con tu participación.';
+$bandImage = asset('img/module-accion.jpg');
+require VIEWS_PATH . '/partials/page-band.php';
+?>
+<section class="section section--mist section--flush-top" aria-label="Catálogo de insignias">
+    <div class="container">
         <?php if (!$items): ?>
             <p class="empty-state">Aún no hay insignias activas.</p>
         <?php else: ?>
@@ -36,7 +35,7 @@ $ownedIds = $ownedIds ?? [];
         <p class="panel-actions" style="margin-top: var(--space-5)">
             <a class="btn btn--secondary" href="<?= url('/ranking') ?>">Ver ranking</a>
             <?php if (is_logged_in()): ?>
-                <a class="btn btn--primary" href="<?= url('/panel') ?>">Mi progreso</a>
+                <a class="btn btn--sol" href="<?= url('/panel') ?>">Mi progreso</a>
             <?php endif; ?>
         </p>
     </div>

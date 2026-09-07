@@ -2,8 +2,8 @@
 
 Plataforma web de **alfabetización oceánica** y **acción ambiental** orientada a un entorno formativo SENA. Integra educación marina, fichas de especies y ecosistemas, campañas comunitarias, reportes ambientales y gamificación básica, todo en un stack local sin frameworks ni nube.
 
-> **Estado actual:** Paso 7 completado — admin ampliado (usuarios) y estadísticas básicas.  
-> **Siguiente:** Paso 8 — hardening, pruebas y entrega.
+> **Estado actual:** Paso 8 completado en código — rediseño UI *Bioluminiscencia marina* (Home + público + admin). Pendiente validación visual y commit.  
+> **Siguiente:** Validación → commit/PR → Paso 9 hardening / pruebas / entrega.
 
 ---
 
@@ -62,6 +62,7 @@ Desarrollar una plataforma web dinámica para informar, educar, concientizar y p
 | Reportes ambientales | Evidencia ciudadana, cola de revisión y seguimiento | Hecho (Paso 5) |
 | Gamificación mínima | Puntos, insignias por umbral, ranking y ajuste admin | Hecho (Paso 6) |
 | Estadísticas básicas | KPIs simples + gestión admin de usuarios | Hecho (Paso 7) |
+| Rediseño UI | Jerarquía visual, atmósfera y consistencia de componentes | Hecho (Paso 8) |
 
 ### Fuera de V1.0 (V1.1+)
 
@@ -171,13 +172,14 @@ Políticas en código: las de Pasos 3–6 más `can_manage_users()` y `can_view_
 | 5 | Campañas y reportes | Completado |
 | 6 | Gamificación mínima | Completado |
 | 7 | Admin ampliado y estadísticas básicas | Completado |
-| 8 | Hardening, pruebas y entrega | Pendiente |
+| 8 | Rediseño UI (Bioluminiscencia marina) | Completado en código (pendiente commit) |
+| 9 | Hardening, pruebas y entrega | Pendiente |
 
 ---
 
 ## 7. Guía acumulada por pasos
 
-Cada paso conserva su alcance y su forma de prueba. Al final de esta sección hay una **checklist completa** del sistema hasta el Paso 7 + perfil.
+Cada paso conserva su alcance y su forma de prueba. Al final de esta sección hay una **checklist completa** del sistema hasta el Paso 8 + perfil.
 
 ### 7.1 Paso 1 — Cimientos (completado)
 
@@ -472,9 +474,35 @@ Cada paso conserva su alcance y su forma de prueba. Al final de esta sección ha
 6. Como docente, `/admin/estadisticas` carga **sin** Comunidad; `/admin/usuarios` redirige sin permiso.
 7. Como estudiante, `/admin` y `/admin/estadisticas` no son accesibles.
 
+### 7.9 Paso 8 — Rediseño UI (Bioluminiscencia marina)
+
+#### Qué incluye
+
+- Dirección **Bioluminiscencia marina**: `--abismo` / `--crepusculo` / `--luz` + `--bio` + acento cálido `--sol` (`#ffb454`)
+- CSS modular comentado: `variables`, `base`, `components/*`, `pages/*`, `admin.css`
+- Tipografías: **Inter** (cuerpo) + **Fraunces** (display) + **IBM Plex Mono** (meta)
+- Home: hero fotográfico + ken burns + onda SVG + tiles + CTA `--sol`
+- Header fijo adaptativo (glass al scroll) + menú «Más» anti-sobrepoblación
+- Listados públicos con **page-band** fotográfico (evita páginas blancas planas)
+- Noticias: featured editorial asimétrico; Educación: **depth-tick** por nivel
+- Catálogos, ranking, panel, auth y admin alineados a la misma paleta
+- Fotos en `assets/img/` (ver `CREDITS.md`); trabajo en `feature/paso-8-ui-redesign` **sin commit** hasta OK
+
+#### Cómo probar el Paso 8
+
+1. Home: hero foto, onda, tiles oscuros, CTA `--sol`, header transparente → glass.
+2. Noticias: banda foto + destacadas con personalidad + filas con acento bio.
+3. Educación: depth-tick visible por nivel (básico / intermedio / avanzado).
+4. Especies / ecosistemas / campañas: page-band + cards con imagen.
+5. Ranking / insignias / reportes / panel: atmósfera mist + tablas/cards elevadas.
+6. Login/registro: intro foto + formulario; botones `--sol` / `--coral` alias.
+7. Admin: sidebar abismo, KPIs con borde bio, tipografía Inter/Fraunces.
+8. Móvil ≤1100px: hamburguesa; ≤860px: grids a una columna.
+9. Sin stage/commit hasta tu OK.
+
 ---
 
-## 8. Checklist de prueba completa (hasta Paso 7 + perfil)
+## 8. Checklist de prueba completa (hasta Paso 8 + perfil)
 
 Usa esta lista como guía de verificación integral del sistema actual:
 
@@ -521,6 +549,13 @@ Usa esta lista como guía de verificación integral del sistema actual:
 - [ ] No se puede dejar el sistema sin admin activo
 - [ ] Usuario inactivo no inicia sesión
 - [ ] Nombre/correo no se editan desde administración
+- [ ] Home: hero foto + onda + tiles + CTA `--sol` (Paso 8)
+- [ ] Noticias: featured editorial + page-band; Educación: depth-tick
+- [ ] Catálogos y ranking con atmósfera (no blanco plano)
+- [ ] Admin: sidebar abismo + tipografía Inter/Fraunces
+- [ ] Auth, panel y admin conservan la misma marca oceánica
+- [ ] Responsive ≤860px sin roturas evidentes
+- [ ] Flujos críticos (login, reportes, admin usuarios/stats) siguen OK tras el rediseño
 
 ### Usuarios demo (seed)
 
@@ -568,15 +603,22 @@ Credenciales locales por defecto (XAMPP) en `config/database.php`:
 
 ## 10. Paleta y UI
 
+Dirección **Bioluminiscencia marina** (Paso 8):
+
 | Token | HEX | Uso |
 |-------|-----|-----|
-| Azul profundo | `#083D77` | Marca, botones primarios |
-| Azul océano | `#0B6E99` | Acentos / hover |
-| Turquesa | `#2EC4B6` | Vida / innovación |
-| Arena clara | `#F4EDE4` | Fondos suaves |
-| Texto | `#334155` | Lectura |
+| `--abismo` | `#061a26` | Hero, footer, sidebar admin |
+| `--crepusculo` | `#0a2d3d` | Bandas / ondas / featured |
+| `--luz` | `#0f4a52` | Gradientes de profundidad |
+| `--superficie` | `#eef7f6` | Fondo de lectura |
+| `--teal` | `#0f6e68` | Enlaces / acentos funcionales |
+| `--bio` | `#43f2d1` | Vida, bordes, kickers |
+| `--sol` | `#ffb454` | CTAs de máxima jerarquía |
+| `--tinta` | `#06222c` | Texto principal |
 
-Tipografías: **Fraunces** (títulos) + **Source Sans 3** (cuerpo).
+Tipografías: **Fraunces** (títulos) + **Inter** (cuerpo) + **IBM Plex Mono** (meta/kickers).
+
+CSS modular bajo `assets/css/` (ya no se usa `main.css` en layouts públicos/admin). Fotos de atmósfera en `assets/img/` (`CREDITS.md`). Uploads de usuarios en `uploads/`.
 
 Layouts: público (`views/layouts/main.php`) y administración (`views/layouts/admin.php`).
 

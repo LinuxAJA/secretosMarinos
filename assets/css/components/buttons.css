@@ -1,0 +1,100 @@
+/**
+ * ============================================================================
+ * buttons.css — Botones del sistema
+ * ============================================================================
+ * --sol: CTAs de máxima jerarquía (acción primaria en marketing).
+ * --tinta / --teal: acciones secundarias y filtros.
+ * ============================================================================
+ */
+
+.btn {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding: 0.85rem 1.55rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  min-height: 2.85rem;
+  transition:
+    transform 0.2s var(--ease),
+    box-shadow 0.2s var(--ease),
+    background 0.2s var(--ease),
+    color 0.2s var(--ease),
+    border-color 0.2s var(--ease);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+/* CTA cálido (sol) — primarios de marketing / hero */
+.btn--sol,
+.btn--coral {
+  background: var(--sol);
+  color: var(--abismo);
+  box-shadow: 0 10px 24px -8px rgba(255, 180, 84, 0.45);
+}
+
+.btn--sol:hover,
+.btn--coral:hover {
+  background: var(--sol-2);
+  color: var(--abismo);
+}
+
+/* Primario oscuro (formularios / admin / filtros) */
+.btn--primary {
+  background: var(--tinta);
+  color: #fff;
+}
+
+.btn--primary:hover {
+  background: var(--teal);
+  color: #fff;
+}
+
+/* Ghost sobre fondos claros */
+.btn--secondary,
+.btn-ghost {
+  background: transparent;
+  color: var(--tinta);
+  border-color: var(--linea);
+}
+
+.btn--secondary:hover,
+.btn-ghost:hover {
+  border-color: var(--tinta);
+  color: var(--tinta);
+}
+
+/* Ghost sobre hero / bandas oscuras */
+.btn--ghost {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border-color: #fff;
+}
+
+.btn--danger {
+  background: #dc2626;
+  color: #fff;
+}
+
+.btn--danger:hover {
+  background: #b91c1c;
+  color: #fff;
+}

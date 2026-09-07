@@ -44,7 +44,7 @@
                     <th>Tipo</th>
                     <th>Estado</th>
                     <th>Creado</th>
-                    <th></th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>

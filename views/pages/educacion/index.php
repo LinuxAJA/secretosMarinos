@@ -1,20 +1,19 @@
 <?php
 /**
- * Biblioteca educativa — listado público.
- * Vars: $items, $categories, $filters, $pagination
+ * Biblioteca educativa — depth-tick por nivel + cabecera foto.
  */
 $filters = $filters ?? ['categoria' => '', 'q' => ''];
 $pagination = $pagination ?? ['page' => 1, 'pages' => 1, 'total' => 0];
 $nivelLabel = ['basico' => 'Básico', 'intermedio' => 'Intermedio', 'avanzado' => 'Avanzado'];
-?>
-<section class="section" aria-labelledby="edu-title">
-    <div class="container">
-        <p class="panel-kicker"><?= e(APP_NAME) ?></p>
-        <h1 id="edu-title" class="section__title">Biblioteca educativa</h1>
-        <p class="section__lead">
-            Artículos y guías sobre oceanografía, biodiversidad y conservación.
-        </p>
 
+$bandTitle = 'Biblioteca educativa';
+$bandLead = 'Artículos y guías sobre oceanografía, biodiversidad y conservación.';
+$bandImage = asset('img/module-educacion.jpg');
+$bandKicker = APP_NAME;
+require VIEWS_PATH . '/partials/page-band.php';
+?>
+<section class="section section--mist section--flush-top" aria-label="Contenidos educativos">
+    <div class="container">
         <form class="filter-bar" method="get" action="<?= url('/educacion') ?>">
             <div class="form-field">
                 <label for="q">Buscar</label>
@@ -38,19 +37,27 @@ $nivelLabel = ['basico' => 'Básico', 'intermedio' => 'Intermedio', 'avanzado' =
             <p class="empty-state">No hay contenidos publicados con esos filtros.</p>
         <?php else: ?>
             <div class="content-list">
-                <?php foreach ($items as $item): ?>
-                    <article class="content-row">
-                        <div>
+                <?php foreach ($items as $i => $item): ?>
+                    <?php $nivel = $item['nivel'] ?? 'basico'; ?>
+                    <article class="content-row" data-depth="<?= e($nivel) ?>">
+                        <div class="content-row__rail" aria-hidden="true">
+                            <span class="content-row__index"><?= str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT) ?></span>
+                            <div class="depth-tick">
+                                <span class="depth-tick__mark depth-tick__mark--<?= e($nivel) ?>"></span>
+                                <span class="depth-tick__label"><?= e($nivelLabel[$nivel] ?? $nivel) ?></span>
+                            </div>
+                        </div>
+                        <div class="content-row__main">
                             <p class="content-row__meta">
-                                <?= e($item['categoria_nombre'] ?? 'Sin categoría') ?>
-                                · <?= e($nivelLabel[$item['nivel']] ?? $item['nivel']) ?>
+                                <span class="content-row__chip"><?= e($item['categoria_nombre'] ?? 'Sin categoría') ?></span>
+                                <span><?= e($nivelLabel[$nivel] ?? $nivel) ?></span>
                             </p>
                             <h2 class="content-row__title">
                                 <a href="<?= url('/educacion/' . $item['slug']) ?>"><?= e($item['titulo']) ?></a>
                             </h2>
                             <p class="content-row__excerpt"><?= e($item['resumen'] ?: excerpt($item['cuerpo'])) ?></p>
                         </div>
-                        <a class="btn btn--secondary" href="<?= url('/educacion/' . $item['slug']) ?>">Leer</a>
+                        <a class="content-row__cta" href="<?= url('/educacion/' . $item['slug']) ?>">Leer</a>
                     </article>
                 <?php endforeach; ?>
             </div>
